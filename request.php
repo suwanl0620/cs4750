@@ -1,3 +1,27 @@
+<?php
+// header('Access-Control-Allow-Origin: http://localhost:4200');
+// header('Access-Control-Allow-Origin: *');
+// header('Access-Control-Allow-Headers: X-Requested-With, Content-Type, Accept, Origin, Authorization');
+// header('Access-Control-Max-Age: 1000');
+// header('Access-Control-Allow-Methods: POST, GET, OPTIONS, DELETE, PUT');
+?>
+
+<?php require('connect-db.php'); // only let user connect if they can connect to the database
+?>
+
+<?php
+if ($_SERVER['REQUEST_METHOD'] == 'POST') { // $ indicates variable, SERVER array is predefined in php
+  // if the Add button is clicked
+  if (!empty($_POST['addBtn'])) {
+    addRequests($_POST['requestedDate'],
+                $_POST['roomNo'],
+                $_POST['requestedBy'],
+                $_POST['requestDesc'],
+                $_POST['priority_option']);
+  }
+}
+?>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -16,6 +40,7 @@
 </head>
 
 <body>  
+<?php include('header.php'); ?>
 <div class="container">
   <div class="row g-3 mt-2">
     <div class="col">
@@ -24,7 +49,7 @@
   </div>
   
   <!---------------->
-
+  <!-- whenever the form is submitted, it is processed as a post request -->
   <form method="post" action="<?php $_SERVER['PHP_SELF'] ?>" onsubmit="return validateInput()">
     <table style="width:98%">
       <tr>
@@ -85,6 +110,7 @@
 
     <div class="row g-3 mx-auto">    
       <div class="col-4 d-grid ">
+        <!-- use 'addBtn' to refer to this button when processing a php request -->
       <input type="submit" value="Add" id="addBtn" name="addBtn" class="btn btn-dark"
            title="Submit a maintenance request" />                  
       </div>	    
