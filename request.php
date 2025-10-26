@@ -10,8 +10,8 @@
 require('request-db.php');
 
 // for debugging
-$list_of_requests = getAllRequests();
-var_dump($list_of_requests);
+//$list_of_requests = getAllRequests();
+//var_dump($list_of_requests);
 
 ?>
 
@@ -63,7 +63,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') { // $ indicates variable, SERVER arra
   
   <!---------------->
   <!-- whenever the form is submitted, it is processed as a post request -->
-  <form method="post" action="<?php $_SERVER['PHP_SELF'] ?>" onsubmit="return validateInput()">
+  <form method="post" action="<?php echo $_SERVER['PHP_SELF'] ?>" onsubmit="return validateInput()">
     <table style="width:98%">
       <tr>
         <td width="50%">
@@ -160,25 +160,25 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') { // $ indicates variable, SERVER arra
   </tr>
   </thead>
 <!-- populate table with data from the list_of_requests array -->
-  <?php foreach ($list_of_requests as :req_info): ?>
+  <?php foreach ($list_of_requests as $req_info): ?>
   <tr>  <!-- loop through each request info associative array, td=column, tr = row -->
-    <td> <?php echo req_info['reqId']; ?> </td>  <!-- first column -->
-    <td> <?php echo req_info['reqDate']; ?> </td>
-    <td> <?php echo req_info['roomNumber']; ?> </td>
-    <td> <?php echo req_info['reqBy']; ?> </td>
-    <td> <?php echo req_info['repairDesc']; ?> </td>
-    <td> <?php echo req_info['reqPriority']; ?> </td>
+    <td> <?php echo $req_info['reqId']; ?> </td>  <!-- first column -->
+    <td> <?php echo $req_info['reqDate']; ?> </td>
+    <td> <?php echo $req_info['roomNumber']; ?> </td>
+    <td> <?php echo $req_info['reqBy']; ?> </td>
+    <td> <?php echo $req_info['repairDesc']; ?> </td>
+    <td> <?php echo $req_info['reqPriority']; ?> </td>
     <td> <!-- update button -->
       <form action="request.php" method="post"> <!-- send post request to that file (as object) -->
         <!--specify how data will be packaged and sent to the server -->
 
         <!-- delete button, using bootstrap btn class (optional), title text appears when hovering mouse -->
         <input type="submit" value="Update" 
-               name ="updateBtn" class="btn btn-bright" 
+               name ="updateBtn" class="btn btn-secondary" 
                title="Click to update this request"
         /> 
         <input type="hidden" name="reqId" 
-               value="<?php echo req_info['reqId']; ?>" />
+               value="<?php echo $req_info['reqId']; ?>" />
 
       </form>
     </td>
@@ -192,7 +192,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') { // $ indicates variable, SERVER arra
                title="Click to delete this request"
         /> 
         <input type="hidden" name="reqId" 
-               value="<?php echo req_info['reqId']; ?>" />
+               value="<?php echo $req_info['reqId']; ?>" />
 
       </form>
     </td>
