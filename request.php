@@ -7,6 +7,12 @@
 ?>
 
 <?php require('connect-db.php'); // only let user connect if they can connect to the database
+require('request-db.php');
+
+// for debugging
+$list_of_requests = getAllRequests();
+var_dump($list_of_requests);
+
 ?>
 
 <?php
@@ -18,13 +24,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') { // $ indicates variable, SERVER arra
                 $_POST['requestedBy'],
                 $_POST['requestDesc'],
                 $_POST['priority_option']);
+    $list_of_requests = getAllRequests();  // refresh the list after adding to immediately display
+
+  } else if (!empty($_POST['deleteBtn'])) {  
+    // if delete button clicked, call delete function
+    deleteRequest($_POST['reqId']);    // only need reqId since that's the primary key
+    $list_of_requests = getAllRequests(); 
   }
 }
+
 ?>
 
 <!DOCTYPE html>
 <html>
-<head>
+<head>  <!--metadata, about page connections, etc -->
   <meta charset="utf-8">    
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -128,7 +141,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') { // $ indicates variable, SERVER arra
 
 </div>
 
-
+<!-- request table code-->
 <hr/>
 <div class="container">
 <h3>List of requests</h3>
@@ -146,6 +159,46 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') { // $ indicates variable, SERVER arra
     <th><b>Delete?</b></th>
   </tr>
   </thead>
+<!-- populate table with data from the list_of_requests array -->
+  <?php foreach ($list_of_requests as :req_info): ?>
+  <tr>  <!-- loop through each request info associative array, td=column, tr = row -->
+    <td> <?php echo req_info['reqId']; ?> </td>  <!-- first column -->
+    <td> <?php echo req_info['reqDate']; ?> </td>
+    <td> <?php echo req_info['roomNumber']; ?> </td>
+    <td> <?php echo req_info['reqBy']; ?> </td>
+    <td> <?php echo req_info['repairDesc']; ?> </td>
+    <td> <?php echo req_info['reqPriority']; ?> </td>
+    <td> <!-- update button -->
+      <form action="request.php" method="post"> <!-- send post request to that file (as object) -->
+        <!--specify how data will be packaged and sent to the server -->
+
+        <!-- delete button, using bootstrap btn class (optional), title text appears when hovering mouse -->
+        <input type="submit" value="Update" 
+               name ="updateBtn" class="btn btn-bright" 
+               title="Click to update this request"
+        /> 
+        <input type="hidden" name="reqId" 
+               value="<?php echo req_info['reqId']; ?>" />
+
+      </form>
+    </td>
+    <td> <!-- delete button -->
+      <form action="request.php" method="post"> <!-- send post request to that file (as object) -->
+        <!--specify how data will be packaged and sent to the server -->
+
+        <!-- delete button, using bootstrap btn class (optional), title text appears when hovering mouse -->
+        <input type="submit" value="Delete" 
+               name ="deleteBtn" class="btn btn-danger" 
+               title="Click to delete this request"
+        /> 
+        <input type="hidden" name="reqId" 
+               value="<?php echo req_info['reqId']; ?>" />
+
+      </form>
+    </td>
+  </tr>
+  <?php endforeach; ?>
+<!-- end of table -->
 </table>
 </div>   
 

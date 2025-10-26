@@ -20,7 +20,16 @@ function addRequests($reqDate, $roomNumber, $reqBy, $repairDesc, $reqPriority)
 
 function getAllRequests()
 {
+    global $db;
+    $query = "SELECT * FROM requests";
    
+    // run query
+    $statement = $db->prepare($query); // compile the query
+    $statement->execute();  // run query, currently not saving the result
+    $results = $statement->fetchAll(); // fetchAll returns an array of all the rows in result (fetch just returns first row)
+    $statement->closeCursor();
+
+    return $results;
 
 }
 
@@ -38,7 +47,19 @@ function updateRequest($reqId, $reqDate, $roomNumber, $reqBy, $repairDesc, $reqP
 
 function deleteRequest($reqId)
 {
+    global $db;
 
+    $query = "DELETE FROM requests WHERE reqId = :fillin";
+    try {
+        $statement = $db->prepare($query);
+        $statement->bindValue(':fillin', $reqId); // the actual value you want to fill in
+        $statement->execute();
+        $statement->closeCursor();  // don't need to return anything
+    } catch (PDOException $e) {
+        echo $e->getMessage();
+    } catch (Exception $e) {
+        echo $e->getMessage();
+    }
     
 }
 
