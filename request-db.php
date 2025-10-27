@@ -35,14 +35,34 @@ function getAllRequests()
 
 function getRequestById($id)  
 {
-    
+    global $db;
 
+    $query = "SELECT * FROM requests WHERE reqID = :id";
+    $statement = $db->prepare($query);
+    $statement->bindValue(':id', $id);
+    $statement->execute();
+    $results = $statement->fetch(); // fetch instead of fetchAll since it should be only one row
+    $statement->closeCursor();
+
+    return $results;
 }
 
 function updateRequest($reqId, $reqDate, $roomNumber, $reqBy, $repairDesc, $reqPriority)
 {
+    global $db;
 
+    $query = "UPDATE requests SET reqDate = :reqDate, roomNumber = :roomNumber, reqBy = :reqBy, repairDesc = :repairDesc, reqPriority = :reqPriority WHERE reqID = :reqId";
+    $statement = $db->prepare($query);
+    $statement->bindValue(':reqDate', $reqDate);
+    $statement->bindValue(':roomNumber', $roomNumber);
+    $statement->bindValue(':reqBy', $reqBy);
+    $statement->bindValue(':repairDesc', $repairDesc);
+    $statement->bindValue(':reqPriority', $reqPriority);
+    $statement->bindValue(':reqId', $reqId);
+    $statement->execute();
+    $statement->closeCursor(); // can also insert try/catch block in case execution fails, display error message
 
+    return $results;
 }
 
 function deleteRequest($reqId)

@@ -9,9 +9,9 @@
 <?php require('connect-db.php'); // only let user connect if they can connect to the database
 require('request-db.php');
 
-// for debugging
 $list_of_requests = getAllRequests();
-//var_dump($list_of_requests);
+//var_dump($list_of_requests); // for debugging
+$request_to_update = null;
 
 ?>
 
@@ -30,6 +30,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') { // $ indicates variable, SERVER arra
     // if delete button clicked, call delete function
     deleteRequest($_POST['reqId']);    // only need reqId since that's the primary key
     $list_of_requests = getAllRequests(); 
+  } else if (!empty($_POST['updateBtn'])) {
+    // retrieve info about that request
+    // fill in the form with the existing info
+    $request_to_update = getRequestById($_POST['reqId']);
+    var_dump($request_to_update);
+  } else if (!empty($_POST['cofmBtn'])) {
+    updateRequest($_POST['reqId'],
+                  $_POST['requestedDate'],
+                  $_POST['roomNo'],
+                  $_POST['requestedBy'],
+                  $_POST['requestDesc'],
+                  $_POST['priority_option']);
+    $list_of_requests = getAllRequests(); // refresh the list after updating to immediately display
   }
 }
 
@@ -73,14 +86,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') { // $ indicates variable, SERVER arra
                    id='requestedDate' name='requestedDate' 
                    placeholder='Format: yyyy-mm-dd' 
                    pattern="\d{4}-\d{1,2}-\d{1,2}" 
-                   value="" />
+                   value="<?php if ($request_to_update != null) echo $request_to_update['reqDate']; ?>" />  <!-- autofill value with existing value from request being updated -->
           </div>
         </td>
         <td>
           <div class='mb-3'>
             Room Number:
             <input type='text' class='form-control' id='roomNo' name='roomNo' 
-                   value="" />
+                   value="<?php if ($request_to_update != null) echo $request_to_update['roomNumber']; ?>" />
           </div>
         </td>
       </tr>
@@ -90,7 +103,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') { // $ indicates variable, SERVER arra
             Requested by: 
             <input type='text' class='form-control' id='requestedBy' name='requestedBy'
                    placeholder='Enter your name'
-                   value="" />
+                   value="<?php if ($request_to_update != null) echo $request_to_update['reqBy']; ?>" />
           </div>
         </td>
       </tr>
@@ -99,7 +112,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') { // $ indicates variable, SERVER arra
           <div class="mb-3">
             Description of work/repair:
             <input type='text' class='form-control' id='requestDesc' name='requestDesc'
-                   value="" />
+                   value="<?php if ($request_to_update != null) echo $request_to_update['repairDesc']; ?>" />
         </div>
         </td>
       </tr>
@@ -109,11 +122,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') { // $ indicates variable, SERVER arra
             Requested Priority:
             <select class='form-select' id='priority_option' name='priority_option'>
               <option selected></option>
-              <option value='high' >
+              <option value='high'
+                <?php if ($request_to_update != null && $request_to_update['reqPriority'] == 'high')
+                  echo ' selected="selected"'; ?>
+                >  <!-- HTML attribute 'selected' inside option tag will select dropdown option -->
                 High - Must be done within 24 hours</option>
-              <option value='medium' >
+              <option value='medium'
+                <?php if ($request_to_update != null && $request_to_update['reqPriority'] == 'medium')
+                  echo ' selected="selected"'; ?>
+                >
                 Medium - Within a week</option>
-              <option value='low' >
+              <option value='low'
+                <?php if ($request_to_update != null && $request_to_update['reqPriority'] == 'low')
+                  echo ' selected="selected"'; ?>
+                >
                 Low - When you get a chance</option>
             </select>
           </div>
@@ -133,10 +155,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') { // $ indicates variable, SERVER arra
       </div>	    
       <div class="col-4 d-grid">
         <input type="reset" value="Clear form" name="clearBtn" id="clearBtn" class="btn btn-secondary" />
-      </div>      
-    </div>  
+      </div>
+    </div>
     <div>
-  </div>  
+  </div>
+  <input type="hidden" name="reqId" 
+         value="<?php echo $_POST['reqId']; ?>" />
+  <!-- <a href="...url?redId='value'"> reqID can also be passed with a URL -->
   </form>
 
 </div>
