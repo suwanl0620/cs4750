@@ -49,7 +49,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') { // $ indicates variable, SERVER arra
   <title>Maintenance Services</title>
   <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">  
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">  
-  <link rel="stylesheet" href="maintenance-system.css">  
+  <link rel="stylesheet" href="maintenance-system.css"> 
 </head>
 
 <body>  
@@ -172,7 +172,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') { // $ indicates variable, SERVER arra
       <form action="request.php" method="post"> <!-- send post request to that file (as object) -->
         <!--specify how data will be packaged and sent to the server -->
         <input type="submit" value="Update" 
-               name ="updateBtn" class="btn btn-secondary" 
+               name ="updateBtn" class="btn btn-primary" 
                title="Click to update this request"
         /> 
         <input type="hidden" name="reqId" 
@@ -183,7 +183,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') { // $ indicates variable, SERVER arra
     <td> <!-- delete button -->
       <form action="request.php" method="post"> <!-- send post request to that file (as object) -->
         <!--specify how data will be packaged and sent to the server -->
-
         <!-- delete button, using bootstrap btn class (optional), title text appears when hovering mouse -->
         <input type="submit" value="Delete" 
                name ="deleteBtn" class="btn btn-danger" 
