@@ -294,11 +294,9 @@ require('request-db.php');
         <div class="section-header">
             <h2>Top Books</h2>
             <div class="filter-container">
-                <span class="filter-icon">🔽</span>
-                <button class="filter-btn">Fiction</button>
-                <button class="filter-btn">Science Fiction</button>
-                <button class="filter-btn">Young Adult</button>
-                <button class="filter-btn">•••</button>
+                <button class="filter-btn">Hardcover Nonfiction</button>
+                <button class="filter-btn">Hardcover Fiction</button>
+                <button class="filter-btn">Combined Print & E-Book Fiction</button>
             </div>
         </div>
 
