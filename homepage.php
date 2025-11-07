@@ -152,6 +152,11 @@ require('request-db.php');
         .book-grid {
             display: grid;
             gap: 1.5rem;
+            max-height: calc((150px + 3rem) * 3 + 1.5rem * 2); /* Height of 3 cards + gaps */
+            overflow-y: auto;
+            overflow-x: hidden;
+            padding-right: 0.5rem;
+            scroll-behavior: smooth;
         }
 
         .book-card {
