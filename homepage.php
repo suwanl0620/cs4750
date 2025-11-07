@@ -266,20 +266,7 @@ require('request-db.php');
     </style>
 </head>
 <body>
-    <header>
-        <nav>
-            <div class="logo">📚</div>
-            <div class="nav-links">
-                <a href="#">Home</a>
-                <a href="#">My Reviews</a>
-                <a href="#">Profile</a>
-            </div>
-            <div class="auth-buttons">
-                <button class="sign-in">Sign In</button>
-                <button class="register">Register</button>
-            </div>
-        </nav>
-    </header>
+    <?php include('header.php'); ?>
 
     <section class="hero">
         <h1>TopShelf</h1>
