@@ -282,7 +282,7 @@ require('request-db.php');
     </header>
 
     <section class="hero">
-        <h1>NYT Bestsellers</h1>
+        <h1>TopShelf</h1>
     </section>
 
     <div class="container">
