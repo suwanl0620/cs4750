@@ -1,49 +1,30 @@
-<?php session_start(); ?>
+<?php
+require_once 'auth.php';
+?>
+<header>
+  <nav>
+    <div class="logo"><a href="homepage.php" style="text-decoration:none;color:inherit;">📚 TopShelf</a></div>
 
-<header>  
-  <nav class="navbar navbar-expand-md navbar-dark bg-dark">
-    <div class="container-fluid">            
-      <a class="navbar-brand" href="#">Your-Logo</a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#collapsibleNavbar" aria-controls="collapsibleNavbar" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="collapsibleNavbar">
-        <ul class="navbar-nav ms-auto">
-          <!-- check if currently logged in, display Log out button 
-               otherwise, display sign up and log in buttons -->
-          <?php if (!isset($_SESSION['username'])) { ?>              
-            <li class="nav-item">
-              <a class="nav-link" href="register.php">Join our community</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="signin.php">Sign in</a>
-            </li>              
-          <?php  } else { ?>                    
-            <li class="nav-item">                  
-              <a class="nav-link" href="signout.php">Sign out</a>
-            </li>
-          <?php } ?>
-        
-          <li class="nav-item">
-            <a class="nav-link" href="#">Software</a>
-          </li>            
-          <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" id="dropdown01" role="button" data-bs-toggle="dropdown" aria-expanded="false">Research</a>
-            <ul class="dropdown-menu" aria-labelledby="dropdown01">
-              <li><a class="dropdown-item" href="#">Design</a></li>
-              <li><a class="dropdown-item" href="#">Development</a></li>
-              <li><a class="dropdown-item" href="#">Testing</a></li>
-              <li><a class="dropdown-item" href="#">Maintenance</a></li>
-            </ul>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#">Activity</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#">Contact</a>
-          </li>
-        </ul>
-      </div>
+    <div class="nav-links">
+      <a href="homepage.php">Home</a>
+      <a href="request.php">Requests</a>
+      <a href="homepage.php#about">About</a>
+    </div>
+
+    <div class="auth-buttons">
+      <?php if (function_exists('is_logged_in') && is_logged_in()): ?>
+        <span style="margin-right:0.8rem;">Welcome, <?php echo htmlspecialchars($_SESSION['username'] ?? $_SESSION['user_id'] ?? ''); ?></span>
+        <a href="logout.php" style="text-decoration:none;">
+          <button style="padding:0.45rem 0.9rem;border-radius:4px;border:1px solid #333;background:#333;color:#fff;cursor:pointer;">Logout</button>
+        </a>
+      <?php else: ?>
+        <a href="login.php" style="text-decoration:none;">
+          <button style="padding:0.45rem 0.9rem;border-radius:4px;border:1px solid #333;background:#fff;cursor:pointer;">Sign In</button>
+        </a>
+        <a href="register.php" style="text-decoration:none;margin-left:0.5rem;">
+          <button style="padding:0.45rem 0.9rem;border-radius:4px;border:1px solid #333;background:#333;color:#fff;cursor:pointer;">Register</button>
+        </a>
+      <?php endif; ?>
     </div>
   </nav>
-</header>    
+</header>
