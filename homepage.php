@@ -1,5 +1,6 @@
 <?php require('connect-db.php'); // only let user connect if they can connect to the database
 require('request-db.php');
+?>
 
 <!DOCTYPE html>
 <html lang="en">
