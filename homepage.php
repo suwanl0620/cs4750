@@ -1,4 +1,6 @@
-<?php require('connect-db.php'); // only let user connect if they can connect to the database
+<?php
+require_once 'auth.php';
+require('connect-db.php'); // only let user connect if they can connect to the database
 require('book-db.php');
 
 // Pick list to show based on user selection or default
