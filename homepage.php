@@ -428,36 +428,36 @@ function isActiveList($current, $selected) {
         <div class="book-grid">
             <?php if (!empty($top_books)): ?>
                 <?php foreach ($top_books as $book): ?>
-                <div class="book-card">
+                <div class="book-card" style="cursor: pointer;" onclick="window.location.href='book-details.php?isbn=<?php echo urlencode($book['ISBN']); ?>'">
                     <div class="book-cover"
                         style="background-image: url('<?php echo htmlspecialchars($book['coverImage']); ?>');
                                 background-size: cover;
                                 background-position: center;">
                     </div>
                     <div class="book-info">
-                    <h3 class="book-title"><?php echo htmlspecialchars($book['title']); ?></h3>
-                    <p class="book-author"><?php echo htmlspecialchars($book['author']); ?></p>
+                        <h3 class="book-title"><?php echo htmlspecialchars($book['title']); ?></h3>
+                        <p class="book-author"><?php echo htmlspecialchars($book['author']); ?></p>
 
-                    <!-- Rating Display -->
-                    <?php
-                        $rating = (float)($book['avgRating'] ?? 0);
-                        $filledStars = floor($rating);
-                        $halfStar = ($rating - $filledStars >= 0.5);
-                        $emptyStars = 5 - $filledStars - ($halfStar ? 1 : 0);
-                    ?>
-                    <div class="star-rating">
-                        <?php echo str_repeat('⭐', $filledStars); ?>
-                        <?php if ($halfStar) echo '✩'; ?>
-                        <?php echo str_repeat('☆', $emptyStars); ?>
-                        <span style="font-size:0.9rem; color:#666;">
-                        (<?php echo htmlspecialchars(number_format($rating, 1)); ?> / 5, 
-                        <?php echo htmlspecialchars($book['ratingCount']); ?> reviews)
-                        </span>
-                    </div>
+                        <!-- ⭐️ Rating Display -->
+                        <?php
+                            $rating = (float)($book['avgRating'] ?? 0);
+                            $filledStars = floor($rating);
+                            $halfStar = ($rating - $filledStars >= 0.5);
+                            $emptyStars = 5 - $filledStars - ($halfStar ? 1 : 0);
+                        ?>
+                        <div class="star-rating">
+                            <?php echo str_repeat('⭐', $filledStars); ?>
+                            <?php if ($halfStar) echo '✩'; ?>
+                            <?php echo str_repeat('☆', $emptyStars); ?>
+                            <span style="font-size:0.9rem; color:#666;">
+                                (<?php echo htmlspecialchars(number_format($rating, 1)); ?> / 5, 
+                                <?php echo htmlspecialchars($book['ratingCount']); ?> reviews)
+                            </span>
+                        </div>
 
-                    <p class="book-description"><?php echo htmlspecialchars($book['description']); ?></p>
-                    <p><strong>Rank #<?php echo htmlspecialchars($book['listRank']); ?></strong></p>
-                    <button class="add-to-list-btn">⭐ Add To List</button>
+                        <p class="book-description"><?php echo htmlspecialchars($book['description']); ?></p>
+                        <p><strong>Rank #<?php echo htmlspecialchars($book['listRank']); ?></strong></p>
+                        <button class="add-to-list-btn" onclick="event.stopPropagation();">⭐ Add To List</button>
                     </div>
                 </div>
                 <?php endforeach; ?>

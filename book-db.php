@@ -47,6 +47,39 @@
         $statement->closeCursor();
         return $results;
     }
+
+    function getBookByISBN($isbn) {
+        global $db;
+    
+        $query = "
+            SELECT 
+                b.ISBN,
+                b.title,
+                b.author,
+                b.description,
+                b.coverImage,
+                ROUND(AVG(r.rating), 1) AS avgRating,
+                COUNT(DISTINCT r.rating) AS ratingCount,
+                COUNT(DISTINCT CASE WHEN r.reviewText IS NOT NULL AND r.reviewText != '' THEN r.userID END) AS reviewCount
+            FROM Books b
+            LEFT JOIN Reviews r ON b.ISBN = r.ISBN
+            WHERE b.ISBN = :isbn
+            GROUP BY b.ISBN, b.title, b.author, b.description, b.coverImage
+        ";
+    
+        try {
+            $statement = $db->prepare($query);
+            $statement->bindValue(':isbn', $isbn);
+            $statement->execute();
+            $result = $statement->fetch();
+            $statement->closeCursor();
+            
+            return $result;
+        } catch (PDOException $e) {
+            echo "Error fetching book details: " . $e->getMessage();
+            return null;
+        }
+    }
     
 /*
 
