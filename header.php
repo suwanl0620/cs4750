@@ -8,7 +8,7 @@ require_once 'auth.php';
     <div class="nav-links">
       <a href="homepage.php">Home</a>
       <a href="my-reviews.php">My Reviews</a>
-      <a href="homepage.php#about">About</a>
+      <a href="profile.php">Profile</a>
     </div>
 
     <div class="auth-buttons">
