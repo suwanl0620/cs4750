@@ -7,6 +7,7 @@ require_once 'auth.php';
 
     <div class="nav-links">
       <a href="homepage.php">Home</a>
+      <a href="book-clubs.php">Book Clubs</a>
       <a href="my-reviews.php">My Reviews</a>
       <a href="profile.php">Profile</a>
     </div>
