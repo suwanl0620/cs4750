@@ -2,6 +2,7 @@
 require_once 'auth.php';
 require('connect-db.php');
 // require some kind of reviews db 
+// change: should only be available if logged in
 ?>
 
 

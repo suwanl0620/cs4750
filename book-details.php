@@ -227,16 +227,7 @@ if (!$book) {
     </style>
 </head>
 <body>
-    <header>
-        <nav>
-            <a href="homepage.php" class="logo">📚</a>
-            <div class="nav-links">
-                <a href="homepage.php">Home</a>
-                <a href="#">My Reviews</a>
-                <a href="#">Profile</a>
-            </div>
-        </nav>
-    </header>
+    <?php include('header.php'); ?>
 
     <div class="container">
         <div class="book-details">

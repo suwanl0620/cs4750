@@ -8,7 +8,7 @@ require_once 'auth.php';
     <div class="nav-links">
       <a href="homepage.php">Home</a>
       <a href="book-clubs.php">Book Clubs</a>
-      <a href="my-reviews.php">My Reviews</a>
+      <a href="my-reviews.php">My Reviews</a>  <!-- should only be available if user is logged in - maybe if you click it takes you to login -->
       <a href="profile.php">Profile</a>
     </div>
 
