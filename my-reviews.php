@@ -5,13 +5,12 @@ require('connect-db.php');
 // change: should only be available if logged in
 ?>
 
-
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TopShelf</title>
+    <title>My Reviews - TopShelf</title>
     <style>
         * {
             margin: 0;
@@ -59,33 +58,6 @@ require('connect-db.php');
             color: #666;
         }
 
-        .auth-buttons {
-            display: flex;
-            gap: 1rem;
-        }
-
-        .auth-buttons button {
-            padding: 0.5rem 1.2rem;
-            border: 1px solid #333;
-            background-color: white;
-            cursor: pointer;
-            font-size: 0.9rem;
-            border-radius: 4px;
-        }
-
-        .auth-buttons button:hover {
-            background-color: #f0f0f0;
-        }
-
-        .auth-buttons .register {
-            background-color: #333;
-            color: white;
-        }
-
-        .auth-buttons .register:hover {
-            background-color: #555;
-        }
-
         .hero {
             background-color: #f0f0f0;
             padding: 5rem 2rem;
@@ -116,99 +88,23 @@ require('connect-db.php');
             padding: 3rem 2rem;
         }
 
-        .section-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 2rem;
-        }
-
-        .section-header h2 {
-            font-size: 1.5rem;
-            color: #333;
-        }
-
-        .filter-container {
-            display: flex;
-            gap: 0.5rem;
-            align-items: center;
-        }
-
-        .filter-icon {
-            font-size: 1.2rem;
-            cursor: pointer;
-            padding: 0.5rem;
-        }
-
-        .filter-btn {
-            padding: 0.5rem 1rem;
-            background-color: white;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 0.9rem;
-        }
-
-        .filter-btn:hover {
-            background-color: #f9f9f9;
-        }
-
-        /* for graying out selected filter */
-        .active-filter {
-            background-color: #d3d3d3;   
-            color: #666;
-            border-color: #aaa;
-            cursor: default;             
-            pointer-events: none;        /* make it unclickable */
-        }
-
-        .date-container {
-            display: flex;
-            gap: 0.5rem;
-            align-items: center
-        }
-
-        .date-dropdown {
-            padding: 0.4rem 0.6rem;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-size: 0.9rem;
-            background-color: #fff;
-            cursor: pointer;
-        }
-        
-        .date-dropdown:hover {
-            background-color: #f9f9f9;
-        }
-        /*
-        .book-grid {
-            display: grid;
-            gap: 1.5rem;
-            max-height: calc((150px + 3rem) * 3 + 1.5rem * 2); // Height of 3 cards + gaps 
-            overflow-y: auto;
-            overflow-x: hidden;
-            padding-right: 0.5rem;
-            scroll-behavior: smooth;
-        }
-        */
-        
-        .book-table-container {
+        .reviews-table-container {
             background-color: white;
             border: 1px solid #e0e0e0;
             border-radius: 8px;
             overflow: hidden;
         }
 
-        .book-table {
+        .reviews-table {
             width: 100%;
             border-collapse: collapse;
         }
 
-        .book-table thead {
+        .reviews-table thead {
             background-color: #f9f9f9;
         }
 
-        .book-table th {
+        .reviews-table th {
             padding: 1rem;
             text-align: left;
             font-size: 0.9rem;
@@ -217,137 +113,331 @@ require('connect-db.php');
             border-bottom: 1px solid #e0e0e0;
         }
 
-        .book-table td {
+        .reviews-table td {
             padding: 1rem;
             border-bottom: 1px solid #f0f0f0;
             vertical-align: top;
         }
 
-        .book-table tbody tr:last-child td {
+        .reviews-table tbody tr:last-child td {
             border-bottom: none;
         }
 
-        .book-table tbody tr:hover {
+        .reviews-table tbody tr:hover {
             background-color: #fafafa;
         }
 
-        .book-card {
-            background-color: white;
-            border: 1px solid #e0e0e0;
-            border-radius: 8px;
-            padding: 1.5rem;
-            display: flex;
-            gap: 1.5rem;
-        }
-
-        .book-cover {
-            width: 100px;
-            height: 150px;
+        .book-cover-small {
+            width: 60px;
+            height: 90px;
             background-color: #ddd;
             border-radius: 4px;
-            flex-shrink: 0;
         }
 
-        .book-info {
-            flex: 1;
+        .star-display {
+            color: #ffd700;
+            font-size: 1rem;
         }
 
-        .book-title {
-            font-size: 1.3rem;
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-            color: #333;
-        }
-
-        .book-author {
-            color: #666;
-            font-size: 0.9rem;
-            margin-bottom: 0.5rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .star-rating {
-            color: #333;
-            margin-bottom: 0.8rem;
-            font-size: 1.1rem;
-        }
-
-        .book-description {
-            color: #666;
-            font-size: 0.95rem;
-            line-height: 1.5;
-            margin-bottom: 1rem;
-        }
-
-        .add-to-list-btn {
-            padding: 0.5rem 1rem;
-            background-color: white;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 0.9rem;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .add-to-list-btn:hover {
-            background-color: #f9f9f9;
-        }
-
-        .saved-books-section {
-            margin-top: 4rem;
-        }
-
-        .saved-books-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 1.5rem;
-        }
-
-        .saved-book-card {
-            background-color: white;
-            border: 1px solid #e0e0e0;
-            border-radius: 8px;
-            padding: 1.5rem;
-        }
-
-        .saved-book-cover {
-            width: 100%;
-            height: 200px;
-            background-color: #ddd;
-            border-radius: 4px;
-            margin-bottom: 1rem;
-        }
-
-        .saved-book-title {
-            font-size: 1.1rem;
-            font-weight: 600;
-            margin-bottom: 0.3rem;
-            color: #333;
-        }
-
-        .saved-book-author {
-            color: #666;
-            font-size: 0.85rem;
-            margin-bottom: 0.5rem;
-            text-transform: uppercase;
-        }
-
-        .saved-book-description {
+        .review-text {
+            max-width: 300px;
             color: #666;
             font-size: 0.9rem;
             line-height: 1.4;
         }
 
+        .action-buttons {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .edit-btn, .delete-btn {
+            padding: 0.4rem 0.8rem;
+            border: 1px solid #ddd;
+            background-color: white;
+            cursor: pointer;
+            font-size: 0.85rem;
+            border-radius: 4px;
+        }
+
+        .edit-btn:hover {
+            background-color: #f0f0f0;
+        }
+
+        .delete-btn {
+            color: #dc2626;
+            border-color: #dc2626;
+        }
+
+        .delete-btn:hover {
+            background-color: #fee;
+        }
+
+        /* Modal Styles */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            overflow-y: auto;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 600px;
+            position: relative;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .close-btn {
+            position: absolute;
+            right: 1.5rem;
+            top: 1.5rem;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #666;
+            background: none;
+            border: none;
+            padding: 0;
+            line-height: 1;
+            text-decoration: none;
+        }
+
+        .close-btn:hover {
+            color: #333;
+        }
+
+        .modal-header {
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .modal-author {
+            color: #666;
+            font-size: 0.9rem;
+            margin-top: 0.25rem;
+        }
+
+        .rating-section {
+            margin-bottom: 1.5rem;
+        }
+
+        .rating-label {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        .star-rating-input {
+            display: flex;
+            gap: 0.5rem;
+            font-size: 1.5rem;
+        }
+
+        .star-rating-input input[type="radio"] {
+            display: none;
+        }
+
+        .star-rating-input label {
+            cursor: pointer;
+            color: #ddd;
+        }
+
+        .star-rating-input input[type="radio"]:checked ~ label {
+            color: #ffd700;
+        }
+
+        .review-section {
+            margin-bottom: 1.5rem;
+        }
+
+        .review-textarea {
+            width: 100%;
+            min-height: 150px;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-family: inherit;
+            font-size: 0.95rem;
+            resize: vertical;
+        }
+
+        .review-textarea:focus {
+            outline: none;
+            border-color: #7c3aed;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+        }
+
+        .save-btn, .cancel-btn {
+            padding: 0.6rem 1.5rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            border: 1px solid #ddd;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .save-btn {
+            background-color: #333;
+            color: white;
+            border-color: #333;
+        }
+
+        .save-btn:hover {
+            background-color: #555;
+        }
+
+        .cancel-btn {
+            background-color: white;
+            color: #333;
+        }
+
+        .cancel-btn:hover {
+            background-color: #f0f0f0;
+        }
     </style>
 </head>
-
-<body>
+    <body>
     <?php include('header.php'); ?>
 
     <section class="hero">
         <h1>My Reviews</h1>
     </section>
+
+    <div class="container">
+        <div class="reviews-table-container">
+            <table class="reviews-table">
+                <thead>
+                    <tr>
+                        <th>Cover</th>
+                        <th>Title</th>
+                        <th>Author</th>
+                        <th>Avg Rating</th>
+                        <th>Review</th>
+                        <th>Date Added</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php if (!empty($user_reviews)): ?>
+                        <?php foreach ($user_reviews as $index => $review): ?>
+                        <tr>
+                            <td>
+                                <div class="book-cover-small"
+                                     style="background-image: url('<?php echo htmlspecialchars($review['coverImage']); ?>');
+                                            background-size: cover;
+                                            background-position: center;">
+                                </div>
+                            </td>
+                            <td><strong><?php echo htmlspecialchars($review['title']); ?></strong></td>
+                            <td><?php echo htmlspecialchars($review['author']); ?></td>
+                            <td>
+                                <div class="star-display">
+                                    <?php
+                                        $rating = (float)$review['avgRating'];
+                                        $filledStars = floor($rating);
+                                        echo str_repeat('★', $filledStars);
+                                        echo str_repeat('☆', 5 - $filledStars);
+                                    ?>
+                                </div>
+                                <div style="font-size: 0.85rem; color: #666; margin-top: 0.25rem;">
+                                    <?php echo number_format($rating, 2); ?>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="review-text">
+                                    <?php echo htmlspecialchars($review['review']); ?>
+                                </div>
+                            </td>
+                            <td><?php echo htmlspecialchars($review['dateAdded']); ?></td>
+                            <td>
+                                <div class="action-buttons">
+                                    <!-- Add your edit functionality here -->
+                                    <button class="edit-btn">Edit</button>
+                                    <!-- Add your delete functionality here -->
+                                    <button class="delete-btn">Delete</button>
+                                </div>
+                            </td>
+                        </tr>
+                        <?php endforeach; ?>
+                    <?php else: ?>
+                        <tr>
+                            <td colspan="7" style="text-align: center; padding: 2rem; color: #666;">
+                                You haven't written any reviews yet.
+                            </td>
+                        </tr>
+                    <?php endif; ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Edit Review Modal (add condition to show/hide based on your PHP logic) -->
+    <div class="modal-overlay">
+        <div class="modal-content">
+            <a href="#" class="close-btn">×</a>
+            
+            <div class="modal-header">
+                <h2 class="modal-title">To Kill A Mockingbird</h2>
+                <p class="modal-author">Lee, Harper</p>
+            </div>
+
+            <form method="post" action="">
+                <div class="rating-section">
+                    <label class="rating-label">My Rating:</label>
+                    <div class="star-rating-input">
+                        <!-- Implement your star rating system here -->
+                        <input type="radio" name="rating" value="5" id="star5">
+                        <label for="star5">☆</label>
+                        <input type="radio" name="rating" value="4" id="star4">
+                        <label for="star4">☆</label>
+                        <input type="radio" name="rating" value="3" id="star3">
+                        <label for="star3">☆</label>
+                        <input type="radio" name="rating" value="2" id="star2">
+                        <label for="star2">☆</label>
+                        <input type="radio" name="rating" value="1" id="star1">
+                        <label for="star1">☆</label>
+                    </div>
+                </div>
+
+                <div class="review-section">
+                    <label class="rating-label">My Review:</label>
+                    <textarea name="review_text" class="review-textarea" placeholder="Write your review here..."></textarea>
+                </div>
+
+                <div class="modal-actions">
+                    <a href="#" class="cancel-btn">Cancel</a>
+                    <button type="submit" class="save-btn">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
 </body>
+</html>
