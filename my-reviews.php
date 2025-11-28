@@ -1,8 +1,13 @@
 <?php 
 require_once 'auth.php';
 require('connect-db.php');
+require('reviews-db.php');
 // require some kind of reviews db 
-// change: should only be available if logged in
+// should only be available if logged in
+$userID = $_SESSION['user_id'] ?? null;
+if (!$userID) { header("Location: login.php"); exit; }
+
+$reviews = getUserReviews($userID);
 ?>
 
  <!DOCTYPE html>
