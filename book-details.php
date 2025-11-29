@@ -1,6 +1,7 @@
 <?php 
 require('connect-db.php');
 require('book-db.php');
+require('reviews-db.php');
 
 // Get ISBN from URL parameter
 $isbn = $_GET['isbn'] ?? null;

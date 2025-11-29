@@ -19,5 +19,20 @@
     }
 
 
+    function addReview($userID, $ISBN, $rating, $description) {
+        global $db;
+
+        $query = "INSERT INTO Reviews (userID, ISBN, rating, description, timestamp)
+              VALUES (:userID, :isbn, :rating, :description, CURRENT_TIMESTAMP)";
+
+
+        $statement = $db->prepare($query);
+        $statement->bindValue(':userID', $userID);
+        $statement->bindValue(':isbn', $isbn);
+        $statement->bindValue(':rating', $rating);
+        $statement->bindValue(':description', $description);        
+        $statement->execute();
+        $statement->closeCursor();
+    }
 
 ?>
