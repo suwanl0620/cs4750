@@ -107,6 +107,7 @@ if (!$book) {
             display: flex;
             flex-direction: column;
             gap: 0.75rem;
+            align-items: center;
         }
 
         .action-btn {
@@ -144,6 +145,7 @@ if (!$book) {
         .star-selector {
             display: flex;
             gap: 0.25rem;
+            justify-content: center;
             font-size: 1.5rem;
             margin-top: 0.5rem;
         }
@@ -237,7 +239,44 @@ if (!$book) {
                 </div>
                 <div class="action-buttons">
                     <button class="action-btn add-to-list-btn">⭐ Add to List</button>
+                    <!-- write review button -->
+                    <!--  this works but the styling gets messed up for some reason?
+                    <a href="?isbn=<?php echo $isbn; ?>&review=1">
+                        <button class="action-btn review-btn">Review</button>
+                    </a>
+    -->
                     <button class="action-btn review-btn">Review</button>
+
+                <?php if (isset($_GET['review']) && $_GET['review'] == 1): ?>
+                    <div style="border:1px solid #ccc; padding:15px; margin-top:20px;">
+                        <h3>Write a Review</h3>
+
+                        <form action="submit-review.php" method="POST">
+                            <!-- Send ISBN to backend -->
+                            <input type="hidden" name="isbn" value="<?php echo $isbn; ?>">
+
+                            <label>Rating:</label><br>
+                            <select name="rating" required>
+                                <option value="">Select...</option>
+                                <option value="5">5 - Excellent</option>
+                                <option value="4">4 - Good</option>
+                                <option value="3">3 - Average</option>
+                                <option value="2">2 - Poor</option>
+                                <option value="1">1 - Terrible</option>
+                            </select>
+                            <br><br>
+
+                            <label>Your Review:</label><br>
+                            <textarea name="review_text" rows="4" cols="40" required></textarea>
+                            <br><br>
+
+                            <button type="submit">Submit Review</button>
+                        </form>
+
+                        <br>
+                        <a href="book-details.php?isbn=<?php echo $isbn; ?>">Cancel</a>
+                    </div>
+                <?php endif; ?>
                     <div class="star-selector">
                         <span>☆</span>
                         <span>☆</span>
