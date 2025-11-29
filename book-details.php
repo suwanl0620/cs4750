@@ -123,6 +123,10 @@ if (!$book) {
             transition: background-color 0.2s;
         }
 
+        .action-btn:hover {
+            text-decoration: none;
+        }
+
         .add-to-list-btn {
             background-color: #333;
             color: white;
@@ -239,13 +243,9 @@ if (!$book) {
                 </div>
                 <div class="action-buttons">
                     <button class="action-btn add-to-list-btn">⭐ Add to List</button>
-                    <!-- write review button -->
-                    <!--  this works but the styling gets messed up for some reason?
-                    <a href="?isbn=<?php echo $isbn; ?>&review=1">
-                        <button class="action-btn review-btn">Review</button>
-                    </a>
-    -->
-                    <button class="action-btn review-btn">Review</button>
+        
+                    <a href="?isbn=<?php echo $isbn; ?>&review=1" class="action-btn review-btn">Review</a>
+
 
                 <?php if (isset($_GET['review']) && $_GET['review'] == 1): ?>
                     <div style="border:1px solid #ccc; padding:15px; margin-top:20px;">
