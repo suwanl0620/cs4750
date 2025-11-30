@@ -56,5 +56,23 @@
         return $rating ?: 0;   // return 0 if none
     }
         
+    function getAllReviewsForBook() {
+        global $db;
+
+        $query = "SELECT R.userID, R.rating, R.description, R.timestamp, U.userID
+                FROM Reviews R
+                JOIN Users U ON R.userID = U.userID
+                WHERE R.ISBN = :ISBN
+                ORDER BY R.timestamp DESC;"; 
+
+        $statement = $db->prepare($query);
+        $statement->bindValue(':ISBN', $ISBN);
+        $statement->execute();
+        $results = $statement->fetchAll();
+        $statement->closeCursor();
+
+        return $results;
+
+    }
 
 ?>
