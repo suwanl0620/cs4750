@@ -25,6 +25,12 @@ if (!$book) {
     exit;
 }
 
+$userRating = 0;
+if (isset($_SESSION['user_id'])) {
+    $userRating = getUserRatingForBook($_SESSION['user_id'], $isbn);
+}
+
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (!empty($_POST['submit_review'])) {
         addReview(
@@ -304,11 +310,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     </div>
                 <?php endif; ?>
                     <div class="star-selector">
-                        <span>☆</span>
-                        <span>☆</span>
-                        <span>☆</span>
-                        <span>☆</span>
-                        <span>☆</span>
+                        <?php 
+                            $filled = $userRating;
+                            $empty = 5 - $filled;
+
+                            echo str_repeat('<span>★</span>', $filled);
+                            echo str_repeat('<span>☆</span>', $empty);
+
+                        
+                        ?>
                     </div>
                     <div class="rating-label">Your Rating</div>
                 </div>

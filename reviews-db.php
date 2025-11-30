@@ -34,5 +34,27 @@
         $statement->execute();
         $statement->closeCursor();
     }
+    
+
+    function getUserRatingForBook($userID, $ISBN) {
+        global $db;
+
+        $query = "SELECT rating 
+              FROM Reviews 
+              WHERE userID = :userID AND ISBN = :ISBN
+              ORDER BY timestamp DESC
+              LIMIT 1";
+
+        $statement = $db->prepare($query);
+        $statement->bindValue(':userID', $userID);
+        $statement->bindValue(':ISBN', $ISBN);
+        $statement->execute();
+
+        $rating = $statement->fetchColumn();
+        $statement->closeCursor();
+
+        return $rating ?: 0;   // return 0 if none
+    }
+        
 
 ?>
