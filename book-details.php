@@ -238,6 +238,59 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             margin-bottom: 1rem;
         }
 
+        /* copy-pasted from my reviews style */
+        .reviews-table-container {
+            background-color: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .reviews-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .reviews-table thead {
+            background-color: #f9f9f9;
+        }
+
+        .reviews-table th {
+            padding: 1rem;
+            text-align: left;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #333;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .reviews-table td {
+            padding: 1rem;
+            border-bottom: 1px solid #f0f0f0;
+            vertical-align: top;
+        }
+
+        .reviews-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .reviews-table tbody tr:hover {
+            background-color: #fafafa;
+        }
+
+        .book-cover-small {
+            width: 60px;
+            height: 90px;
+            background-color: #ddd;
+            border-radius: 4px;
+        }
+
+        .star-display {
+            color: #ffd700;
+            font-size: 1rem;
+        }
+
+
         .book-meta {
             display: flex;
             gap: 2rem;
@@ -351,6 +404,29 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 <div class="book-description">
                     <p><?php echo nl2br(htmlspecialchars($book['description'])); ?></p>
+                </div>
+                
+                <section class="hero">  <!-- maybe change this class later for formatting -->
+                    <h1>Book Reviews</h1>
+                </section>
+                <div class="reviews-table-container">
+                    <table class="reviews-table">
+                        <thead>
+                            <tr>
+                                <th>Cover</th>
+                                <th>Title</th>
+                                <th>Author</th>
+                                <th>Rating</th>
+                                <th>Review</th>
+                                <th>Username</th>
+                                <th>Date Added</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+                
+
                 </div>
             </div>
         </div>

@@ -419,9 +419,9 @@ $user_reviews = [
                             <td><?php echo htmlspecialchars($review['dateAdded']); ?></td>
                             <td>
                                 <div class="action-buttons">
-                                    <!-- Add your edit functionality here -->
+                                    <!-- Add edit functionality here -->
                                     <button class="edit-btn">Edit</button>
-                                    <!-- Add your delete functionality here -->
+                                    <!-- Add delete functionality here -->
                                     <button class="delete-btn">Delete</button>
                                 </div>
                             </td>
@@ -439,7 +439,7 @@ $user_reviews = [
         </div>
     </div>
 
-    <!-- Edit Review Modal (add condition to show/hide based on your PHP logic) -->
+    <!-- Edit Review Modal (add condition to show/hide based on PHP logic) -->
     <div class="modal-overlay">
         <div class="modal-content">
             <a href="#" class="close-btn">×</a>
@@ -453,7 +453,7 @@ $user_reviews = [
                 <div class="rating-section">
                     <label class="rating-label">My Rating:</label>
                     <div class="star-rating-input">
-                        <!-- Implement your star rating system here -->
+                        <!-- Implement star rating system here -->
                         <input type="radio" name="rating" value="5" id="star5">
                         <label for="star5">☆</label>
                         <input type="radio" name="rating" value="4" id="star4">
