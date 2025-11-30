@@ -23,12 +23,12 @@
         global $db;
 
         $query = "INSERT INTO Reviews (userID, ISBN, rating, description, timestamp)
-              VALUES (:userID, :isbn, :rating, :description, CURRENT_TIMESTAMP)";
+              VALUES (:userID, :ISBN, :rating, :description, CURRENT_TIMESTAMP)";
 
 
         $statement = $db->prepare($query);
         $statement->bindValue(':userID', $userID);
-        $statement->bindValue(':isbn', $isbn);
+        $statement->bindValue(':ISBN', $ISBN);
         $statement->bindValue(':rating', $rating);
         $statement->bindValue(':description', $description);        
         $statement->execute();

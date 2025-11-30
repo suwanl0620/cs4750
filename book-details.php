@@ -1,7 +1,13 @@
 <?php 
+require_once 'auth.php';
 require('connect-db.php');
 require('book-db.php');
 require('reviews-db.php');
+
+// error catching stuff
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 
 // Get ISBN from URL parameter
 $isbn = $_GET['isbn'] ?? null;
@@ -18,6 +24,25 @@ if (!$book) {
     echo "Book not found.";
     exit;
 }
+
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    if (!empty($_POST['submit_review'])) {
+        addReview(
+            $_SESSION['user_id'],      // user ID from session
+            $_POST['isbn'],           // book ISBN
+            $_POST['rating'],         // star rating
+            $_POST['description']     // review text
+        );
+
+        // refresh the list of reviews
+        $user_reviews = getUserReviews($_SESSION['user_id']);
+
+        // redirect page to avoid duplicate submissions
+        header("Location: book-details.php?isbn=" . $_POST['isbn']);
+        exit();
+    }
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -252,7 +277,7 @@ if (!$book) {
                     <div style="border:1px solid #ccc; padding:15px; margin-top:20px;">
                         <h3>Write a Review</h3>
 
-                        <form action="submit-review.php" method="POST">
+                        <form action="book-details.php?isbn=<?php echo $isbn; ?>" method="POST">
                             <!-- Send ISBN to backend -->
                             <input type="hidden" name="isbn" value="<?php echo $isbn; ?>">
 
@@ -268,10 +293,10 @@ if (!$book) {
                             <br><br>
 
                             <label>Your Review:</label><br>
-                            <textarea name="review_text" rows="4" cols="40" required></textarea>
+                            <textarea name="description" rows="4" cols="40" required></textarea>
                             <br><br>
 
-                            <button type="submit">Submit Review</button>
+                            <button type="submit" name="submit_review" value="1">Submit Review</button>
                         </form>
 
                         <br>
