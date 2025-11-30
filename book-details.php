@@ -25,12 +25,16 @@ if (!$book) {
     exit;
 }
 
+// get info for "your rating" star display
 $userRating = 0;
 if (isset($_SESSION['user_id'])) {
     $userRating = getUserRatingForBook($_SESSION['user_id'], $isbn);
 }
 
+// get info for displaying all reviews for the book
+$reviews = getReviewsForBook($isbn);
 
+// for writing a review
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (!empty($_POST['submit_review'])) {
         addReview(
@@ -406,6 +410,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     <p><?php echo nl2br(htmlspecialchars($book['description'])); ?></p>
                 </div>
                 
+                <!-- book reviews -->
                 <section class="hero">  <!-- maybe change this class later for formatting -->
                     <h1>Book Reviews</h1>
                 </section>
@@ -413,16 +418,59 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     <table class="reviews-table">
                         <thead>
                             <tr>
-                                <th>Cover</th>
-                                <th>Title</th>
-                                <th>Author</th>
+                                <th>Username</th>
                                 <th>Rating</th>
                                 <th>Review</th>
-                                <th>Username</th>
                                 <th>Date Added</th>
                                 <th></th>
                             </tr>
                         </thead>
+                        <tbody>
+                            <?php if (!empty($reviews)):?>
+                                <?php foreach ($reviews as $index => $review): ?>
+                                <tr>           
+                                    <td>
+                                        <!-- username -->
+                                        <?php echo htmlspecialchars($review['userID']); ?>
+                                    </td>                         
+                                    <td> 
+                                        <!-- rating -->
+                                        <div class="star-display">
+                                            <?php
+                                                $rating = (float)$review['rating'];
+                                                $filledStars = floor($rating);
+                                                echo str_repeat('★', $filledStars);
+                                                echo str_repeat('☆', 5 - $filledStars);
+                                            ?>
+                                        </div>
+                                        <div style="font-size: 0.85rem; color: #666; margin-top: 0.25rem;">
+                                            <?php echo number_format($rating, 2); ?>
+                                        </div>
+                                    </td>
+
+                                    <td>
+                                        <!-- review text -->
+                                        <div class="review-text">
+                                            <?php echo htmlspecialchars($review['description']); ?>
+                                        </div>
+                                    </td>
+
+                                    <td>
+                                        <!-- date added -->
+                                        <?php echo htmlspecialchars($review['timestamp']); ?>
+                                    </td>
+
+                                   
+                                 </tr>
+                            <?php endforeach; ?>
+                    <?php else: ?>
+                        <tr>
+                            <td colspan="7" style="text-align: center; padding: 2rem; color: #666;">
+                                No reviews yet.
+                            </td>
+                        </tr>
+                    <?php endif; ?>
+                        </tbody>
                     </table>
                 </div>
                 

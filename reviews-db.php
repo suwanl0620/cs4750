@@ -56,7 +56,7 @@
         return $rating ?: 0;   // return 0 if none
     }
         
-    function getAllReviewsForBook() {
+    function getReviewsForBook($ISBN) {
         global $db;
 
         $query = "SELECT R.userID, R.rating, R.description, R.timestamp, U.userID
