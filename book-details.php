@@ -34,8 +34,14 @@ if (isset($_SESSION['user_id'])) {
 // get info for displaying all reviews for the book
 $reviews = getReviewsForBook($isbn);
 
-// for writing a review
+// let user submit/write a review
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    if (!isset($_SESSION['user_id'])) {
+        // if user is not logged in, redirect to login page
+        header("Location: login.php");
+        exit();
+    }
+    
     if (!empty($_POST['submit_review'])) {
         addReview(
             $_SESSION['user_id'],      // user ID from session
@@ -52,6 +58,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         exit();
     }
 }
+
+
+
 
 ?>
 
