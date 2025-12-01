@@ -36,28 +36,49 @@ $reviews = getReviewsForBook($isbn);
 
 // let user submit/write a review
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    // if user is not logged in, redirect to login page
     if (!isset($_SESSION['user_id'])) {
-        // if user is not logged in, redirect to login page
         header("Location: login.php");
         exit();
     }
-    
+
+    /*
+    // check if user has already left a rating for this book
+    $leftRating = getUserRatingForBook($_SESSION['user_id'], $isbn);
+    if ($leftRating != 0) {
+        $errorMessage = "You have already left a review for this book.";
+    }
+        */
     if (!empty($_POST['submit_review'])) {
-        addReview(
+        $result = addReview(
             $_SESSION['user_id'],      // user ID from session
             $_POST['isbn'],           // book ISBN
             $_POST['rating'],         // star rating
             $_POST['description']     // review text
         );
+        
+        if ($result === "duplicate") {
+            // user has already left a review
+            echo "<p style='color:red;'>You have already left a review for this book.</p>";
+        } else if ($result === true) {
+            // successful review
+            // refresh the list of reviews
+            $user_reviews = getUserReviews($_SESSION['user_id']);
 
-        // refresh the list of reviews
-        $user_reviews = getUserReviews($_SESSION['user_id']);
+            // redirect page to avoid duplicate submissions
+            header("Location: book-details.php?isbn=" . $_POST['isbn']);
+            exit();
+        } else {
+            echo "<p style='color:red;'>An unexpected error occurred. Please try again.</p>";
+        }
+        
 
-        // redirect page to avoid duplicate submissions
-        header("Location: book-details.php?isbn=" . $_POST['isbn']);
-        exit();
+        
     }
+
 }
+
+
 
 
 
@@ -303,6 +324,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             font-size: 1rem;
         }
 
+        .error-popup {
+            background-color: #f8d7da; /* Light red background */
+            color: #721c24; /* Dark red text */
+            border: 1px solid #f5c6cb; /* Red border */
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            text-align: center;
+            max-width: 400px;
+            margin-left: auto;
+            margin-right: auto;    
+        }
+
 
         .book-meta {
             display: flex;
@@ -332,6 +366,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 </head>
 <body>
     <?php include('header.php'); ?>
+
+    <!-- error message -->
+    <?php if (!empty($errorMessage)): ?>
+            <div class="error-popup">
+                <strong>Error:</strong> <?php echo htmlspecialchars($errorMessage); ?>
+            </div>
+    <?php endif; ?>
 
     <div class="container">
         <div class="book-details">
