@@ -427,7 +427,7 @@ function isActiveList($current, $selected) {
                         <h3 class="book-title"><?php echo htmlspecialchars($book['title']); ?></h3>
                         <p class="book-author"><?php echo htmlspecialchars($book['author']); ?></p>
 
-                        <!-- ⭐️ Rating Display -->
+                        <!-- Rating Display -->
                         <?php
                             $rating = (float)($book['avgRating'] ?? 0);
                             $filledStars = floor($rating);
@@ -435,7 +435,7 @@ function isActiveList($current, $selected) {
                             $emptyStars = 5 - $filledStars - ($halfStar ? 1 : 0);
                         ?>
                         <div class="star-rating">
-                            <?php echo str_repeat('⭐', $filledStars); ?>
+                            <?php echo str_repeat('★', $filledStars); ?>
                             <?php if ($halfStar) echo '✩'; ?>
                             <?php echo str_repeat('☆', $emptyStars); ?>
                             <span style="font-size:0.9rem; color:#666;">
