@@ -78,11 +78,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 }
 
-
-
-
-
-
 ?>
 
 <!DOCTYPE html>
@@ -380,55 +375,59 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <div class="book-cover" 
                      style="background-image: url('<?php echo htmlspecialchars($book['coverImage']); ?>');">
                 </div>
-                <div class="action-buttons">
-                    <button class="action-btn add-to-list-btn">⭐ Add to List</button>
-        
-                    <a href="?isbn=<?php echo $isbn; ?>&review=1" class="action-btn review-btn">Review</a>
+                <?php if (function_exists('is_logged_in') && is_logged_in()): ?>
+                    <div class="action-buttons">
+                        <button class="action-btn add-to-list-btn">⭐ Add to List</button>
+            
+                        <a href="?isbn=<?php echo $isbn; ?>&review=1" class="action-btn review-btn">Review</a>
 
 
-                <?php if (isset($_GET['review']) && $_GET['review'] == 1): ?>
-                    <div style="border:1px solid #ccc; padding:15px; margin-top:20px;">
-                        <h3>Write a Review</h3>
+                    <?php if (isset($_GET['review']) && $_GET['review'] == 1): ?>
+                        <div style="border:1px solid #ccc; padding:15px; margin-top:20px;">
+                            <h3>Write a Review</h3>
 
-                        <form action="book-details.php?isbn=<?php echo $isbn; ?>" method="POST">
-                            <!-- Send ISBN to backend -->
-                            <input type="hidden" name="isbn" value="<?php echo $isbn; ?>">
+                            <form action="book-details.php?isbn=<?php echo $isbn; ?>" method="POST">
+                                <!-- Send ISBN to backend -->
+                                <input type="hidden" name="isbn" value="<?php echo $isbn; ?>">
 
-                            <label>Rating:</label><br>
-                            <select name="rating" required>
-                                <option value="">Select...</option>
-                                <option value="5">5 - Excellent</option>
-                                <option value="4">4 - Good</option>
-                                <option value="3">3 - Average</option>
-                                <option value="2">2 - Poor</option>
-                                <option value="1">1 - Terrible</option>
-                            </select>
-                            <br><br>
+                                <label>Rating:</label><br>
+                                <select name="rating" required>
+                                    <option value="">Select...</option>
+                                    <option value="5">5 - Excellent</option>
+                                    <option value="4">4 - Good</option>
+                                    <option value="3">3 - Average</option>
+                                    <option value="2">2 - Poor</option>
+                                    <option value="1">1 - Terrible</option>
+                                </select>
+                                <br><br>
 
-                            <label>Your Review:</label><br>
-                            <textarea name="description" rows="4" cols="40" required></textarea>
-                            <br><br>
+                                <label>Your Review:</label><br>
+                                <textarea name="description" rows="4" cols="40" required></textarea>
+                                <br><br>
 
-                            <button type="submit" name="submit_review" value="1">Submit Review</button>
-                        </form>
+                                <button type="submit" name="submit_review" value="1">Submit Review</button>
+                            </form>
 
-                        <br>
-                        <a href="book-details.php?isbn=<?php echo $isbn; ?>">Cancel</a>
+                            <br>
+                            <a href="book-details.php?isbn=<?php echo $isbn; ?>">Cancel</a>
+                        </div>
+                    <?php endif; ?>
+                        <div class="star-selector">
+                            <?php 
+                                $filled = $userRating;
+                                $empty = 5 - $filled;
+
+                                echo str_repeat('<span>★</span>', $filled);
+                                echo str_repeat('<span>☆</span>', $empty);
+
+                            
+                            ?>
+                        </div>
+                        <div class="rating-label">Your Rating</div>
                     </div>
+                <?php else: ?>
+                    <p><strong>Sign in to save or review this book!</strong></p>
                 <?php endif; ?>
-                    <div class="star-selector">
-                        <?php 
-                            $filled = $userRating;
-                            $empty = 5 - $filled;
-
-                            echo str_repeat('<span>★</span>', $filled);
-                            echo str_repeat('<span>☆</span>', $empty);
-
-                        
-                        ?>
-                    </div>
-                    <div class="rating-label">Your Rating</div>
-                </div>
             </div>
 
             <div class="book-info-section">

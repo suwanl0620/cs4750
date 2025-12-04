@@ -7,10 +7,11 @@ require_once 'auth.php';
 
     <div class="nav-links">
       <?php if (function_exists('is_logged_in') && is_logged_in()): ?>  <!-- only show menu buttons if logged in -->
-        <a href="homepage.php">Home</a>
         <a href="book-clubs.php">Book Clubs</a>
         <a href="my-reviews.php">My Reviews</a>
         <a href="profile.php">Profile</a>
+      <?php else: ?>
+        <p><strong>Sign in to save, review, and discuss your favorite books!</strong></p>
       <?php endif; ?>
     </div>
     

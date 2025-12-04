@@ -424,8 +424,10 @@ function isActiveList($current, $selected) {
                                 background-position: center;">
                     </div>
                     <div class="book-info">
+                        <p><strong>Rank #<?php echo htmlspecialchars($book['listRank']); ?></strong></p>
                         <h3 class="book-title"><?php echo htmlspecialchars($book['title']); ?></h3>
                         <p class="book-author"><?php echo htmlspecialchars($book['author']); ?></p>
+                        
 
                         <!-- Rating Display -->
                         <?php
@@ -445,8 +447,9 @@ function isActiveList($current, $selected) {
                         </div>
 
                         <p class="book-description"><?php echo htmlspecialchars($book['description']); ?></p>
-                        <p><strong>Rank #<?php echo htmlspecialchars($book['listRank']); ?></strong></p>
-                        <button class="add-to-list-btn" onclick="event.stopPropagation();">⭐ Add To List</button>
+                        <?php if (function_exists('is_logged_in') && is_logged_in()): ?>  <!-- only show menu buttons if logged in -->
+                            <button class="add-to-list-btn" onclick="event.stopPropagation();">⭐ Add To List</button>
+                        <?php endif; ?>
                     </div>
                 </div>
                 <?php endforeach; ?>
