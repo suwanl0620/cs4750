@@ -4,6 +4,8 @@ require('connect-db.php');
 require('reviews-db.php');
 
 $user_reviews = getUserReviews($_SESSION['user_id']);
+$want_to_read = getWantToReadList($_SESSION['user_id']);
+$read_list = getReadList($_SESSION['user_id']);
 
 ?>
 
@@ -83,6 +85,120 @@ $user_reviews = getUserReviews($_SESSION['user_id']);
                         <tr>
                             <td colspan="7" style="text-align: center; padding: 2rem; color: #666;">
                                 You haven't written any reviews yet.
+                            </td>
+                        </tr>
+                    <?php endif; ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="container">
+        <h2 style="margin-bottom: 1rem;">Books I Want to Read</h2>
+        <div class="reviews-table-container">
+            <table class="reviews-table">
+                <thead>
+                    <tr>
+                        <th>Cover</th>
+                        <th>Title</th>
+                        <th>Author</th>
+                        <th>Avg Rating</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php if (!empty($want_to_read)): ?>
+                        <?php foreach ($want_to_read as $index => $review): ?>
+                        <tr>
+                            <td>
+                                <div class="book-cover-small"
+                                     style="background-image: url('<?php echo htmlspecialchars($review['coverImage']); ?>');
+                                            background-size: cover;
+                                            background-position: center;">
+                                </div>
+                            </td>
+                            <td onclick="window.location.href='book-details.php?isbn=<?php echo urlencode($review['ISBN']); ?>'"><strong><?php echo htmlspecialchars($review['title']); ?></strong></td>
+                            <td><?php echo htmlspecialchars($review['author']); ?></td>
+                            <td>
+                                <div class="star-display">
+                                    <?php
+                                        $rating = (float)$review['avgRating'];
+                                        $filledStars = floor($rating);
+                                        echo str_repeat('★', $filledStars);
+                                        echo str_repeat('☆', 5 - $filledStars);
+                                    ?>
+                                </div>
+                                <div style="font-size: 0.85rem; color: #666; margin-top: 0.25rem;">
+                                    <?php echo number_format($rating, 2); ?>
+                                </div>
+                            </td>
+                        </tr>
+                        <?php endforeach; ?>
+                    <?php else: ?>
+                        <tr>
+                            <td colspan="7" style="text-align: center; padding: 2rem; color: #666;">
+                                You haven't saved any books to your Want to Read list yet.
+                            </td>
+                        </tr>
+                    <?php endif; ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="container">
+        <h2 style="margin-bottom: 1rem;">Books I've Read</h2>
+        <div class="reviews-table-container">
+            <table class="reviews-table">
+                <thead>
+                    <tr>
+                        <th>Cover</th>
+                        <th>Title</th>
+                        <th>Author</th>
+                        <th>Avg Rating</th>
+                        <th>Review</th>
+                        <th>Date Added</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php if (!empty($read_list)): ?>
+                        <?php foreach ($read_list as $index => $review): ?>
+                        <tr>
+                            <td>
+                                <div class="book-cover-small"
+                                     style="background-image: url('<?php echo htmlspecialchars($review['coverImage']); ?>');
+                                            background-size: cover;
+                                            background-position: center;">
+                                </div>
+                            </td>
+                            <td onclick="window.location.href='book-details.php?isbn=<?php echo urlencode($review['ISBN']); ?>'"><strong><?php echo htmlspecialchars($review['title']); ?></strong></td>
+                            <td><?php echo htmlspecialchars($review['author']); ?></td>
+                            <td>
+                                <div class="star-display">
+                                    <?php
+                                        $rating = (float)$review['avgRating'];
+                                        $filledStars = floor($rating);
+                                        echo str_repeat('★', $filledStars);
+                                        echo str_repeat('☆', 5 - $filledStars);
+                                    ?>
+                                </div>
+                                <div style="font-size: 0.85rem; color: #666; margin-top: 0.25rem;">
+                                    <?php echo number_format($rating, 2); ?>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="review-text">
+                                    <?php echo htmlspecialchars($review['review']); ?>
+                                </div>
+                            </td>
+                            <td><?php echo htmlspecialchars($review['dateAdded']); ?></td>
+                        </tr>
+                        <?php endforeach; ?>
+                    <?php else: ?>
+                        <tr>
+                            <td colspan="7" style="text-align: center; padding: 2rem; color: #666;">
+                                You haven't marked any books as read yet.
                             </td>
                         </tr>
                     <?php endif; ?>

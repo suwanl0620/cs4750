@@ -142,33 +142,6 @@ function isActiveList($current, $selected) {
             </div>
         </div>
     -->
-
-        <!-- saved books -->
-        <div class="saved-books-section">
-            <h2 style="margin-bottom: 2rem;">Your Saved Books</h2>
-            <div class="saved-books-grid">
-                <div class="saved-book-card">
-                    <div class="saved-book-cover"></div>
-                    <h3 class="saved-book-title">Title</h3>
-                    <p class="saved-book-author">AUTHOR</p>
-                    <p class="saved-book-description">description of book goes here</p>
-                </div>
-
-                <div class="saved-book-card">
-                    <div class="saved-book-cover"></div>
-                    <h3 class="saved-book-title">Title</h3>
-                    <p class="saved-book-author">AUTHOR</p>
-                    <p class="saved-book-description">description of book goes here</p>
-                </div>
-
-                <div class="saved-book-card">
-                    <div class="saved-book-cover"></div>
-                    <h3 class="saved-book-title">Title</h3>
-                    <p class="saved-book-author">AUTHOR</p>
-                    <p class="saved-book-description">description of book goes here</p>
-                </div>
-            </div>
-        </div>
     </div>
 
 

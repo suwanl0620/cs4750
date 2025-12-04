@@ -1,4 +1,38 @@
 <?php
+    function getReadList($userID) {
+        global $db;
+
+        $query = "SELECT B.ISBN, B.title, B.author, B.description
+                FROM ReadBooks R
+                JOIN Books B ON R.ISBN = B.ISBN
+                WHERE R.userID = :userID;";
+
+        $statement = $db->prepare($query);
+        $statement->bindValue(':userID', $userID);
+        $statement->execute();
+        $results = $statement->fetchAll();
+        $statement->closeCursor();
+
+        return $results;
+    }
+
+    function getWantToReadList($userID) {
+        global $db;
+
+        $query = "SELECT B.ISBN, B.title, B.author, B.description
+                FROM WantToRead W
+                JOIN Books B ON W.ISBN = B.ISBN
+                WHERE W.userID = :userID;";
+
+        $statement = $db->prepare($query);
+        $statement->bindValue(':userID', $userID);
+        $statement->execute();
+        $results = $statement->fetchAll();
+        $statement->closeCursor();
+
+        return $results;
+    }
+
     function getUserReviews($userID) {
         global $db;
 
