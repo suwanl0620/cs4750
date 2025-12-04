@@ -6,12 +6,14 @@ require_once 'auth.php';
     <div class="logo"><a href="homepage.php" style="text-decoration:none;color:inherit;">📚 TopShelf</a></div>
 
     <div class="nav-links">
-      <a href="homepage.php">Home</a>
-      <a href="book-clubs.php">Book Clubs</a>
-      <a href="my-reviews.php">My Reviews</a>  <!-- should only be available if user is logged in - maybe if you click it takes you to login -->
-      <a href="profile.php">Profile</a>
+      <?php if (function_exists('is_logged_in') && is_logged_in()): ?>  <!-- only show menu buttons if logged in -->
+        <a href="homepage.php">Home</a>
+        <a href="book-clubs.php">Book Clubs</a>
+        <a href="my-reviews.php">My Reviews</a>
+        <a href="profile.php">Profile</a>
+      <?php endif; ?>
     </div>
-
+    
     <div class="auth-buttons">
       <?php if (function_exists('is_logged_in') && is_logged_in()): ?>
         <span style="margin-right:0.8rem;">Welcome, <?php echo htmlspecialchars($_SESSION['username'] ?? $_SESSION['user_id'] ?? ''); ?></span>
