@@ -77,7 +77,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 ?>
 
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -101,16 +101,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         <th>Cover</th>
                         <th>Title</th>
                         <th>Author</th>
-                        <th>Avg Rating</th>
-                        <th>Review</th>
+                        <th>Your Rating</th>
+                        <th>Your Review</th>
                         <th>Date Added</th>
                         <th></th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php if (!empty($user_reviews)): ?>
-                        <?php foreach ($user_reviews as $index => $review): ?>
-                        <tr>
+                        <?php foreach ($user_reviews as $review): ?>
+                        <tr onclick="window.location.href='book-details.php?isbn=<?php echo urlencode($review['ISBN']); ?>'">
                             <td>
                                 <div class="book-cover-small"
                                      style="background-image: url('<?php echo htmlspecialchars($review['coverImage']); ?>');
@@ -123,7 +123,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             <td>
                                 <div class="star-display">
                                     <?php
-                                        $rating = (float)$review['avgRating'];
+                                        $rating = (float)$review['rating'];
                                         $filledStars = floor($rating);
                                         echo str_repeat('★', $filledStars);
                                         echo str_repeat('☆', 5 - $filledStars);
@@ -135,10 +135,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             </td>
                             <td>
                                 <div class="review-text">
-                                    <?php echo htmlspecialchars($review['review']); ?>
+                                    <?php echo htmlspecialchars($review['description']); ?>
                                 </div>
                             </td>
-                            <td><?php echo htmlspecialchars($review['dateAdded']); ?></td>
+                            <td><?php echo htmlspecialchars($review['timestamp']); ?></td>
                             <td>
                                 <div class="action-buttons">
                                     <!-- Add edit functionality here -->

@@ -2,7 +2,7 @@
     function getUserReviews($userID) {
         global $db;
 
-        $query = "SELECT R.ISBN, B.title, R.rating, R.description, R.timestamp
+        $query = "SELECT R.ISBN, B.title, R.rating, R.description, R.timestamp, B.coverImage, B.author
                 FROM Reviews R
                 JOIN Books B ON R.ISBN = B.ISBN
                 WHERE R.userID = :userID
