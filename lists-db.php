@@ -102,7 +102,7 @@
                 LEFT JOIN Books B ON W.ISBN = B.ISBN
                 LEFT JOIN Reviews R ON B.ISBN = R.ISBN
                 WHERE W.userID = :userID
-                GROUP BY R.ISBN
+                GROUP BY W.ISBN
                 ORDER BY timestamp DESC;";
 
         $statement = $db->prepare($query);
@@ -124,7 +124,7 @@
                 LEFT JOIN Books B ON W.ISBN = B.ISBN
                 LEFT JOIN Reviews R ON B.ISBN = R.ISBN
                 WHERE W.userID = :userID
-                GROUP BY R.ISBN;";
+                GROUP BY W.ISBN;";
 
         $statement = $db->prepare($query);
         $statement->bindValue(':userID', $userID);
