@@ -2,10 +2,78 @@
 require_once 'auth.php';
 require('connect-db.php');
 require('reviews-db.php');
+require('lists-db.php');
+
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 
 $user_reviews = getUserReviews($_SESSION['user_id']);
 $want_to_read = getWantToReadList($_SESSION['user_id']);
 $read_list = getReadList($_SESSION['user_id']);
+
+// let user edit lists
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    // if user is not logged in, redirect to login page
+    if (!isset($_SESSION['user_id'])) {
+        header("Location: login.php");
+        exit();
+    }
+
+    // move book from want to read to read list
+    if (!empty($_POST['read_book'])) {
+        $result = markAsRead(
+            $_SESSION['user_id'],      // user ID from session
+            $_POST['isbn']           // book ISBN
+        );
+        
+        if ($result === true) {
+            $want_to_read = getWantToReadList($_SESSION['user_id']);
+            $read_list = getReadList($_SESSION['user_id']);
+
+            // redirect page to avoid duplicate submissions
+            header("Location: profile.php");
+            exit();
+        } else {
+            echo "<p style='color:red;'>An unexpected error occurred. Please try again.</p>";
+        }
+    }
+    
+    // remove book from want to read list
+    else if (!empty($_POST['remove_want_to_read'])) {
+        $result = removeFromWantToRead(
+            $_SESSION['user_id'],      // user ID from session
+            $_POST['isbn']           // book ISBN
+        );
+        
+        if ($result === true) {
+            $want_to_read = getWantToReadList($_SESSION['user_id']);
+
+            // redirect page to avoid duplicate submissions
+            header("Location: profile.php");
+            exit();
+        } else {
+            echo "<p style='color:red;'>An unexpected error occurred. Please try again.</p>";
+        }
+    }
+
+    // remove book from Read list
+    else if (!empty($_POST['remove_read'])) {
+        $result = removeFromRead(
+            $_SESSION['user_id'],      // user ID from session
+            $_POST['isbn']           // book ISBN
+        );
+        
+        if ($result === true) {
+            $read_list = getReadList($_SESSION['user_id']);
+
+            // redirect page to avoid duplicate submissions
+            header("Location: profile.php");
+            exit();
+        } else {
+            echo "<p style='color:red;'>An unexpected error occurred. Please try again.</p>";
+        }
+    }
+}
 
 ?>
 
@@ -108,21 +176,21 @@ $read_list = getReadList($_SESSION['user_id']);
                 </thead>
                 <tbody>
                     <?php if (!empty($want_to_read)): ?>
-                        <?php foreach ($want_to_read as $index => $review): ?>
-                        <tr>
+                        <?php foreach ($want_to_read as $book): ?>
+                        <tr onclick="window.location.href='book-details.php?isbn=<?php echo urlencode($book['ISBN']); ?>'">
                             <td>
                                 <div class="book-cover-small"
-                                     style="background-image: url('<?php echo htmlspecialchars($review['coverImage']); ?>');
+                                     style="background-image: url('<?php echo htmlspecialchars($book['coverImage']); ?>');
                                             background-size: cover;
                                             background-position: center;">
                                 </div>
                             </td>
-                            <td onclick="window.location.href='book-details.php?isbn=<?php echo urlencode($review['ISBN']); ?>'"><strong><?php echo htmlspecialchars($review['title']); ?></strong></td>
-                            <td><?php echo htmlspecialchars($review['author']); ?></td>
+                            <td onclick="window.location.href='book-details.php?isbn=<?php echo urlencode($book['ISBN']); ?>'"><strong><?php echo htmlspecialchars($book['title']); ?></strong></td>
+                            <td><?php echo htmlspecialchars($book['author']); ?></td>
                             <td>
                                 <div class="star-display">
                                     <?php
-                                        $rating = (float)$review['avgRating'];
+                                        $rating = (float)$book['avgRating'];
                                         $filledStars = floor($rating);
                                         echo str_repeat('★', $filledStars);
                                         echo str_repeat('☆', 5 - $filledStars);
@@ -132,12 +200,26 @@ $read_list = getReadList($_SESSION['user_id']);
                                     <?php echo number_format($rating, 2); ?>
                                 </div>
                             </td>
+                            <td>
+                                <div class="action-buttons">
+                                    <form action="profile.php" method="POST">
+                                        <input type="hidden" name="isbn" value="<?php echo htmlspecialchars($book['ISBN']); ?>">
+                                        <!-- Mark as read -->
+                                        <button type="submit" name="read_book" value="1" class="edit-btn">Mark as Read</button>
+                                    </form>
+                                    <form action="profile.php" method="POST">
+                                        <input type="hidden" name="isbn" value="<?php echo htmlspecialchars($book['ISBN']); ?>">
+                                        <!-- Remove from want to read list -->
+                                        <button type="submit" name="remove_want_to_read" value="1" class="delete-btn">Remove from List</button>
+                                    </form>
+                                </div>
+                            </td>
                         </tr>
                         <?php endforeach; ?>
                     <?php else: ?>
                         <tr>
                             <td colspan="7" style="text-align: center; padding: 2rem; color: #666;">
-                                You haven't saved any books to your Want to Read list yet.
+                                You don't currently have any saved books in your Want to Read list.
                             </td>
                         </tr>
                     <?php endif; ?>
@@ -156,28 +238,27 @@ $read_list = getReadList($_SESSION['user_id']);
                         <th>Title</th>
                         <th>Author</th>
                         <th>Avg Rating</th>
-                        <th>Review</th>
                         <th>Date Added</th>
                         <th></th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php if (!empty($read_list)): ?>
-                        <?php foreach ($read_list as $index => $review): ?>
-                        <tr>
+                        <?php foreach ($read_list as $book): ?>
+                        <tr onclick="window.location.href='book-details.php?isbn=<?php echo urlencode($book['ISBN']); ?>'">
                             <td>
                                 <div class="book-cover-small"
-                                     style="background-image: url('<?php echo htmlspecialchars($review['coverImage']); ?>');
+                                     style="background-image: url('<?php echo htmlspecialchars($book['coverImage']); ?>');
                                             background-size: cover;
                                             background-position: center;">
                                 </div>
                             </td>
-                            <td onclick="window.location.href='book-details.php?isbn=<?php echo urlencode($review['ISBN']); ?>'"><strong><?php echo htmlspecialchars($review['title']); ?></strong></td>
-                            <td><?php echo htmlspecialchars($review['author']); ?></td>
+                            <td><strong><?php echo htmlspecialchars($book['title']); ?></strong></td>
+                            <td><?php echo htmlspecialchars($book['author']); ?></td>
                             <td>
                                 <div class="star-display">
                                     <?php
-                                        $rating = (float)$review['avgRating'];
+                                        $rating = (float)$book['avgRating'];
                                         $filledStars = floor($rating);
                                         echo str_repeat('★', $filledStars);
                                         echo str_repeat('☆', 5 - $filledStars);
@@ -187,18 +268,22 @@ $read_list = getReadList($_SESSION['user_id']);
                                     <?php echo number_format($rating, 2); ?>
                                 </div>
                             </td>
+                            <td><?php echo htmlspecialchars($book['timestamp']); ?></td>
                             <td>
-                                <div class="review-text">
-                                    <?php echo htmlspecialchars($review['review']); ?>
+                                <div class="action-buttons">
+                                    <form action="profile.php" method="POST">
+                                        <input type="hidden" name="isbn" value="<?php echo htmlspecialchars($book['ISBN']); ?>">
+                                        <!-- Mark as read -->
+                                        <button type="submit" name="remove_read" value="1" class="delete-btn">Remove From List</button>
+                                    </form>
                                 </div>
                             </td>
-                            <td><?php echo htmlspecialchars($review['dateAdded']); ?></td>
                         </tr>
                         <?php endforeach; ?>
                     <?php else: ?>
                         <tr>
                             <td colspan="7" style="text-align: center; padding: 2rem; color: #666;">
-                                You haven't marked any books as read yet.
+                                You don't currently have any books marked as read.
                             </td>
                         </tr>
                     <?php endif; ?>
