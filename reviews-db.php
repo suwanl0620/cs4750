@@ -1,4 +1,24 @@
 <?php
+    function wantToRead($userID, $ISBN) {
+        try {
+            global $db;
+
+            $query = "INSERT INTO WantToRead (ISBN, userID)
+                VALUES (:ISBN, :userID)";
+
+            $statement = $db->prepare($query);
+            $statement->bindValue(':ISBN', $ISBN);
+            $statement->bindValue(':userID', $userID);
+            $statement->execute();
+            $statement->closeCursor();
+
+            return true;
+
+        } catch (PDOException $e) {
+            return false;
+        }
+    }
+
     function getReadList($userID) {
         global $db;
 

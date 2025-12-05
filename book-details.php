@@ -19,6 +19,10 @@ if (!$isbn) {
 
 // Fetch book details
 $book = getBookByISBN($isbn);
+$want_to_read = getWantToReadList($_SESSION['user_id']);
+$want_to_read_book = array_filter($want_to_read, function($b) use ($isbn) {
+    return $b['ISBN'] === $isbn;
+});
 
 if (!$book) {
     echo "Book not found.";
@@ -71,11 +75,22 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         } else {
             echo "<p style='color:red;'>An unexpected error occurred. Please try again.</p>";
         }
-        
-
-        
     }
-
+    
+    else if (!empty($_POST['want_to_read'])) {
+        $result = wantToRead(
+            $_SESSION['user_id'],      // user ID from session
+            $_POST['isbn'],           // book ISBN
+        );
+        
+        if ($result === true) {
+            // redirect page to avoid duplicate submissions
+            header("Location: book-details.php?isbn=" . $_POST['isbn']);
+            exit();
+        } else {
+            echo "<p style='color:red;'>An unexpected error occurred. Please try again.</p>";
+        }
+    }
 }
 
 ?>
@@ -106,7 +121,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 </div>
                 <?php if (function_exists('is_logged_in') && is_logged_in()): ?>
                     <div class="action-buttons">
-                        <button class="action-btn add-to-list-btn">⭐ Add to List</button>
+                        <!-- only display if not already in want to read list -->
+                        <?php if (empty($want_to_read_book)): ?>
+                            <form action="book-details.php?isbn=<?php echo $isbn; ?>" method="POST">
+                                <!-- Send ISBN to backend -->
+                                <input type="hidden" name="isbn" value="<?php echo $isbn; ?>">
+                                <button type="submit" name="want_to_read" value="1" class="action-btn add-to-list-btn">⭐ Want to Read</button>
+                            </form>
+                        <?php else: ?>
+                            <button class="action-btn in-list-btn" disabled>✔ In Want to Read List</button>
+                        <?php endif; ?>
             
                         <a href="?isbn=<?php echo $isbn; ?>&review=1" class="action-btn review-btn">Review</a>
 

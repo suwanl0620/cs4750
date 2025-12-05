@@ -118,9 +118,6 @@ function isActiveList($current, $selected) {
                         </div>
 
                         <p class="book-description"><?php echo htmlspecialchars($book['description']); ?></p>
-                        <?php if (function_exists('is_logged_in') && is_logged_in()): ?>  <!-- only show menu buttons if logged in -->
-                            <button class="add-to-list-btn" onclick="event.stopPropagation();">⭐ Add To List</button>
-                        <?php endif; ?>
                     </div>
                 </div>
                 <?php endforeach; ?>
@@ -128,23 +125,6 @@ function isActiveList($current, $selected) {
                 <p>No books found for <?php echo htmlspecialchars($listName); ?> on <?php echo htmlspecialchars($date); ?>.</p>
             <?php endif; ?>
         </div>
-                <!--
-        <div class="book-grid">
-            <div class="book-card">
-                <div class="book-cover"></div>
-                <div class="book-info">
-                    <h3 class="book-title">Title</h3>
-                    <p class="book-author">AUTHOR</p>
-                    <div class="star-rating">☆ ☆ ☆ ☆ ☆</div>
-                    <p class="book-description">description of book goes here</p>
-                    <button class="add-to-list-btn">⭐ Add To List</button>
-                </div>
-            </div>
-        </div>
-    -->
     </div>
-
-
-
 </body>
 </html>
