@@ -89,4 +89,22 @@
 
     }
 
+
+    function getUserReviewByBook($userID, $isbn) {
+        global $db;
+
+        $query = "SELECT * FROM Reviews 
+                  WHERE userID = :userID AND ISBN = :ISBN";
+        $statement = $db->prepare($query);
+        $statement->bindValue(':userID', $userID);
+        $statement->bindValue(':ISBN', $ISBN);
+        $statement->execute();
+        $results = $statement->fetch(); // fetch instead of fetchAll since it should be only one row
+        $statement->closeCursor();
+
+        return $results;
+    }
+        
+
+
 ?>

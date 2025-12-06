@@ -10,6 +10,7 @@ ini_set('display_errors', 1);
 $user_reviews = getUserReviews($_SESSION['user_id']);
 $want_to_read = getWantToReadList($_SESSION['user_id']);
 $read_list = getReadList($_SESSION['user_id']);
+$request_to_edit = null;
 
 // let user edit lists
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -17,6 +18,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (!isset($_SESSION['user_id'])) {
         header("Location: login.php");
         exit();
+    }
+
+    if (!empty($_POST['editBtn'])) {
+        $request_to_edit = getUserReviews($_SESSION['user_id'], $_POST['isbn']);
     }
 
     // move book from want to read to read list
@@ -141,8 +146,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             <td><?php echo htmlspecialchars($review['timestamp']); ?></td>
                             <td>
                                 <div class="action-buttons">
-                                    <!-- Add edit functionality here -->
-                                    <button class="edit-btn">Edit</button>
+                                    <!-- EDIT BUTTON -->
+                                    <!--<button class="edit-btn">Edit</button>-->
+                                    <form action="profile.php?isbn=<?php echo urlencode($review['ISBN']); ?>" method="POST">
+                                        <input type="submit" value="Edit"
+                                               name="editBtn" class="edit-btn"
+                                        />                                       
+                                        <input type="hidden" name="isbn" value="<?php echo $isbn; ?>"/>
+
+
                                     <!-- Add delete functionality here -->
                                     <button class="delete-btn">Delete</button>
                                 </div>
