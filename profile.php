@@ -25,12 +25,6 @@ if (isset($_GET['edit_isbn'])) {
     }
 }
 
-if (isset($_GET['edit_isbn'])) {
-    echo "<!-- DEBUG: edit_isbn = " . htmlspecialchars($_GET['edit_isbn']) . " -->";
-    echo "<!-- DEBUG: show_modal = " . ($show_modal ? 'true' : 'false') . " -->";
-    echo "<!-- DEBUG: edit_review found = " . ($edit_review ? 'yes' : 'no') . " -->";
-}
-
 // let user edit lists
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // if user is not logged in, redirect to login page
