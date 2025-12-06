@@ -43,8 +43,27 @@ if (isset($_SESSION['user_id'])) {
 // get info for displaying all reviews for the book
 $reviews = getReviewsForBook($isbn);
 
+// Check if user has already reviewed this book
+$userHasReviewed = false;
+$errorMessage = '';
+if (isset($_SESSION['user_id'])) {
+    foreach ($reviews as $review) {
+        if ($review['userID'] == $_SESSION['user_id']) {
+            $userHasReviewed = true;
+            break;
+        }
+    }
+}
+
 // check if we should show the review modal
-$show_review_modal = isset($_GET['review']) && $_GET['review'] == 1;
+$show_review_modal = false;
+if (isset($_GET['review']) && $_GET['review'] == 1) {
+    if ($userHasReviewed) {
+        $errorMessage = "You have already left a review for this book.";
+    } else {
+        $show_review_modal = true;
+    }
+}
 
 // let user submit/write a review
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
