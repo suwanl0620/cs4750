@@ -121,6 +121,29 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Profile - TopShelf</title>
     <link rel="stylesheet" href="styles.css">
+    <style>
+        /* style override for edit review popup*/
+        /* fix star rating to show correctly with row-reverse */
+        .star-rating-input {
+            flex-direction: row-reverse;
+        }
+        
+        /* color the checked star AND all stars after it (which appear left due to reverse) */
+        .star-rating-input input[type="radio"]:checked ~ label,
+        .star-rating-input input[type="radio"]:checked + label {
+            color: #ffd700;
+        }
+
+        /* Center the modal header */
+        .modal-overlay .modal-header {
+            text-align: center;
+        }
+        
+        /* Center the star rating input */
+        .modal-overlay .star-rating-input {
+            justify-content: center;
+        }
+    </style>
 </head>
     <body>
     <?php include('header.php'); ?>
@@ -344,32 +367,29 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <p class="modal-author"><?php echo htmlspecialchars($edit_review['author']); ?></p>
             </div>
 
-            <form method="post" action="">
+            <form method="post" action="profile.php">
+                <input type="hidden" name="isbn" value="<?php echo htmlspecialchars($edit_review['ISBN']); ?>">
                 <div class="rating-section">
                     <label class="rating-label">My Rating:</label>
                     <div class="star-rating-input">
                         <!-- Implement star rating system here -->
-                        <input type="radio" name="rating" value="5" id="star5">
-                        <label for="star5">☆</label>
-                        <input type="radio" name="rating" value="4" id="star4">
-                        <label for="star4">☆</label>
-                        <input type="radio" name="rating" value="3" id="star3">
-                        <label for="star3">☆</label>
-                        <input type="radio" name="rating" value="2" id="star2">
-                        <label for="star2">☆</label>
-                        <input type="radio" name="rating" value="1" id="star1">
-                        <label for="star1">☆</label>
+                        
+                        <?php for ($i = 5; $i >= 1; $i--): ?>
+                            <input type="radio" name="rating" value="<?php echo $i; ?>" id="star<?php echo $i; ?>" <?php echo (floor($edit_review['rating']) == $i) ? 'checked' : ''; ?>>                            
+                            <label for="star<?php echo $i; ?>">☆</label>
+                        <?php endfor; ?>
+
                     </div>
                 </div>
 
                 <div class="review-section">
                     <label class="rating-label">My Review:</label>
-                    <textarea name="review_text" class="review-textarea" placeholder="Write your review here..."></textarea>
+                    <textarea name="review_text" class="review-textarea" placeholder="Write your review here..."><?php echo htmlspecialchars($edit_review['description']); ?></textarea>
                 </div>
 
                 <div class="modal-actions">
-                    <a href="#" class="cancel-btn">Cancel</a>
-                    <button type="submit" class="save-btn">Save</button>
+                    <a href="profile.php" class="cancel-btn">Cancel</a>
+                    <button type="submit" name="update_review" value="1" class="save-btn">Save</button>
                 </div>
             </form>
         </div>
