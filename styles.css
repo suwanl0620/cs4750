@@ -832,3 +832,267 @@ nav {
     font-size: 0.95rem;
     color: #333;
 }
+
+.create-club-btn {
+    display: inline-block;
+    background-color: #4a90e2;
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 4px;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.create-club-btn:hover {
+    background-color: #357abd;
+}
+
+.club-meta {
+    color: #666;
+    font-size: 0.9rem;
+    margin-top: 0.5rem;
+}
+
+.club-details-container {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 2rem;
+}
+
+.club-stats {
+    display: flex;
+    gap: 2rem;
+    margin: 1.5rem 0;
+    color: #666;
+}
+
+.club-actions {
+    margin: 2rem 0;
+}
+
+.btn {
+    display: inline-block;
+    padding: 0.75rem 2rem;
+    border: none;
+    border-radius: 4px;
+    font-size: 1rem;
+    cursor: pointer;
+    text-decoration: none;
+    text-align: center;
+}
+
+.btn-join {
+    background-color: #4a90e2;
+    color: white;
+}
+
+.btn-join:hover {
+    background-color: #357abd;
+}
+
+.btn-leave {
+    background-color: #dc3545;
+    color: white;
+}
+
+.btn-leave:hover {
+    background-color: #c82333;
+}
+
+.btn-disabled {
+    background-color: #6c757d;
+    color: white;
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.message {
+    padding: 1rem;
+    border-radius: 4px;
+    margin-bottom: 1rem;
+}
+
+.message-success {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.message-error {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+.posts-section {
+    margin-top: 2rem;
+}
+
+.posts-section h3 {
+    margin-bottom: 1.5rem;
+    color: #333;
+}
+
+.post-form {
+    background: #f8f9fa;
+    padding: 1.5rem;
+    border-radius: 8px;
+    margin-bottom: 2rem;
+}
+
+.post-form textarea {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 1rem;
+    font-family: inherit;
+    min-height: 100px;
+    resize: vertical;
+}
+
+.post-form button {
+    margin-top: 1rem;
+    background-color: #4a90e2;
+    color: white;
+    padding: 0.5rem 1.5rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.post-form button:hover {
+    background-color: #357abd;
+}
+
+.posts-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.post {
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 1.5rem;
+}
+
+.post-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid #eee;
+}
+
+.post-author {
+    font-weight: 600;
+    color: #333;
+}
+
+.post-timestamp {
+    color: #666;
+    font-size: 0.9rem;
+}
+
+.post-content {
+    color: #333;
+    line-height: 1.6;
+    margin-bottom: 1rem;
+}
+
+.post-actions {
+    display: flex;
+    gap: 1rem;
+}
+
+.reply-btn {
+    background: none;
+    border: none;
+    color: #4a90e2;
+    cursor: pointer;
+    font-size: 0.9rem;
+    padding: 0;
+}
+
+.reply-btn:hover {
+    text-decoration: underline;
+}
+
+.reply-form {
+    margin-top: 1rem;
+    background: #f8f9fa;
+    padding: 1rem;
+    border-radius: 4px;
+    display: none;
+}
+
+.reply-form.active {
+    display: block;
+}
+
+.reply-form textarea {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    font-family: inherit;
+    min-height: 60px;
+    resize: vertical;
+}
+
+.reply-form button {
+    margin-top: 0.5rem;
+    background-color: #4a90e2;
+    color: white;
+    padding: 0.4rem 1rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9rem;
+}
+
+.reply-form button:hover {
+    background-color: #357abd;
+}
+
+.replies {
+    margin-top: 1rem;
+    padding-left: 2rem;
+    border-left: 3px solid #e9ecef;
+}
+
+.reply {
+    background: #f8f9fa;
+    border-radius: 4px;
+    padding: 1rem;
+    margin-top: 0.75rem;
+}
+
+.reply .post-header {
+    margin-bottom: 0.5rem;
+}
+
+.reply .post-content {
+    margin-bottom: 0;
+}
+
+.no-posts {
+    text-align: center;
+    color: #666;
+    padding: 2rem;
+    background: #f8f9fa;
+    border-radius: 8px;
+}
+
+.member-only-notice {
+    background: #fff3cd;
+    color: #856404;
+    padding: 1rem;
+    border-radius: 4px;
+    margin-bottom: 1rem;
+    text-align: center;
+}
