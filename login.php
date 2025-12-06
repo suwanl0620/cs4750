@@ -38,10 +38,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <h1>Sign In</h1>
   </section>
 
-  <div class="login-container">
+  <div class="container">
     <?php if ($error): ?>
       <div class="error-message"><?php echo htmlspecialchars($error); ?></div>
     <?php endif; ?>
+  </div>
+
+  <div class="login-container">
 
     <form method="post" action="login.php" novalidate>
       <div class="form-group">

@@ -14,7 +14,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } else {
         $hash = password_hash($password, PASSWORD_DEFAULT);
         if (function_exists('createUser') && createUser($username, $hash)) {
-            header('Location: login.php');
+            $_SESSION['user_id'] = $user['userID'] ?? $user['userId'] ?? $username;
+            $_SESSION['username'] = $user['userID'] ?? $user['userId'] ?? $username;
+            header('Location: homepage.php');
             exit;
         } else {
             $error = 'Failed to create user. Please try again.';
@@ -37,12 +39,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <h1>Create an Account</h1>
   </section>
 
-  <div class="login-container">
+  <div class="container">
     <?php if ($error): ?>
       <div class="error-message"><?php echo htmlspecialchars($error); ?></div>
     <?php endif; ?>
+  </div>
 
-    <form method="post" action="login.php" novalidate>
+  <div class="login-container"> 
+
+    <form method="post" action="register.php" novalidate>
       <div class="form-group">
         <label for="username">Username</label>
         <input id="username" name="username" type="text" required value="<?php echo htmlspecialchars($username); ?>"/>
