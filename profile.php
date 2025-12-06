@@ -50,6 +50,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
     }
 
+      // Delete review
+      else if (!empty($_POST['delete_review'])) {
+        $result = deleteReview($_SESSION['user_id'], $_POST['isbn']);
+        
+        if ($result === true) {
+            header("Location: profile.php");
+            exit();
+        } else {
+            echo "<p style='color:red;'>An unexpected error occurred. Please try again.</p>";
+        }
+    }
+
     // move book from want to read to read list
     if (!empty($_POST['read_book'])) {
         $result = markAsRead(
@@ -195,13 +207,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             <td><?php echo htmlspecialchars($review['timestamp']); ?></td>
                             <td>
                                 <div class="action-buttons">
-                                    <!--<button class="edit-btn">Edit</button>-->
                                     <!-- edit button -->
                                     <a href="profile.php?edit_isbn=<?php echo urlencode($review['ISBN']); ?>" 
                                        class="edit-btn" style="text-decoration: none; display: inline-block;">Edit</a>
                                  
-                                    <!-- Add delete functionality here -->
-                                    <button class="delete-btn">Delete</button>
+                                    <!-- delete button -->
+                                    <form action="profile.php" method="POST" style="display: inline;">
+                                        <input type="hidden" name="isbn" value="<?php echo htmlspecialchars($review['ISBN']); ?>">
+                                        <button type="submit" name="delete_review" value="1" class="delete-btn" onclick="return confirm('Are you sure you want to delete this review?');">Delete</button>
+                                    </form>
 
                                 </div>
                             </td>

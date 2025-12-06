@@ -129,6 +129,27 @@
             return false;
         }
 
+    }
+
+    function deleteReview($userID, $ISBN) {
+        try {
+            global $db;
+
+            $query = "DELETE FROM Reviews
+                    WHERE userID = :userID AND ISBN = :ISBN;";
+
+            $statement = $db->prepare($query);
+            $statement->bindValue(':userID', $userID);
+            $statement->bindValue(':ISBN', $ISBN);
+            $statement->execute();
+            $statement->closeCursor();
+
+            return true;
+        } catch (PDOException $e) {
+            return false;
+        }
+        
+
 
     }
 
