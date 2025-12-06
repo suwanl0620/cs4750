@@ -23,6 +23,11 @@ $all_clubs = getAllClubs();
     </section>
 
     <div class="container">
+        <div class="clubs-header">
+            <h2>All Book Clubs</h2>
+            <a href="create-club.php" class="create-club-btn">+ Create New Club</a>
+        </div>
+        
         <div class="book-grid">
             <?php if (!empty($all_clubs)): ?>
                 <?php foreach ($all_clubs as $club): ?>
@@ -30,12 +35,15 @@ $all_clubs = getAllClubs();
                     <div class="book-info">
                         <h3 class="book-title"><?php echo htmlspecialchars($club['name']); ?></h3>
                         <p class="book-author" style="text-transform: capitalize;"><?php echo htmlspecialchars($club['description']); ?></p>
+                        <p class="club-meta"><?php echo $club['member_count']; ?> member<?php echo $club['member_count'] != 1 ? 's' : ''; ?></p>
                     </div>
                 </div>
                 <?php endforeach; ?>
             <?php else: ?>
-                <p>No book clubs found.</p>
+                <p>No book clubs found. Be the first to create one!</p>
             <?php endif; ?>
         </div>
     </div>
 </body>
+
+
