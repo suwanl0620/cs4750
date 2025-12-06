@@ -10,7 +10,26 @@ ini_set('display_errors', 1);
 $user_reviews = getUserReviews($_SESSION['user_id']);
 $want_to_read = getWantToReadList($_SESSION['user_id']);
 $read_list = getReadList($_SESSION['user_id']);
-$request_to_edit = null;
+
+// check if we should show edit modal
+$show_modal = false;
+$edit_review = null;
+if (isset($_GET['edit_isbn'])) {
+    // find review to edit
+    foreach ($user_reviews as $review) {
+        if ($review['ISBN'] === $_GET['edit_isbn']) {
+            $edit_review = $review;
+            $show_modal = true;
+            break;
+        }   
+    }
+}
+
+if (isset($_GET['edit_isbn'])) {
+    echo "<!-- DEBUG: edit_isbn = " . htmlspecialchars($_GET['edit_isbn']) . " -->";
+    echo "<!-- DEBUG: show_modal = " . ($show_modal ? 'true' : 'false') . " -->";
+    echo "<!-- DEBUG: edit_review found = " . ($edit_review ? 'yes' : 'no') . " -->";
+}
 
 // let user edit lists
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -20,8 +39,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         exit();
     }
 
-    if (!empty($_POST['editBtn'])) {
-        $request_to_edit = getUserReviews($_SESSION['user_id'], $_POST['isbn']);
+    // update review
+    if (!empty($_POST['update_review'])) {
+        $result = updateReview(
+            $_SESSION['user_id'],
+            $_POST['isbn'],
+            $_POST['rating'],
+            $_POST['review_text']
+        );
+
+        if ($result === true) {
+            header("Location: profile.php");
+            exit();
+        } else {
+            echo "<p style='color:red;'>An unexpected error occurred. Please try again.</p>";
+        }
     }
 
     // move book from want to read to read list
@@ -146,17 +178,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             <td><?php echo htmlspecialchars($review['timestamp']); ?></td>
                             <td>
                                 <div class="action-buttons">
-                                    <!-- EDIT BUTTON -->
                                     <!--<button class="edit-btn">Edit</button>-->
-                                    <form action="profile.php?isbn=<?php echo urlencode($review['ISBN']); ?>" method="POST">
-                                        <input type="submit" value="Edit"
-                                               name="editBtn" class="edit-btn"
-                                        />                                       
-                                        <input type="hidden" name="isbn" value="<?php echo $isbn; ?>"/>
-
-
+                                    <!-- edit button -->
+                                    <a href="profile.php?edit_isbn=<?php echo urlencode($review['ISBN']); ?>" 
+                                       class="edit-btn" style="text-decoration: none; display: inline-block;">Edit</a>
+                                 
                                     <!-- Add delete functionality here -->
                                     <button class="delete-btn">Delete</button>
+
                                 </div>
                             </td>
                         </tr>
@@ -305,13 +334,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     </div>
 
     <!-- Edit Review Modal (add condition to show/hide based on PHP logic) -->
-    <div class="modal-overlay">
+    <?php if ($show_modal && $edit_review): ?>
+    <div class="modal-overlay active">
         <div class="modal-content">
-            <a href="#" class="close-btn">×</a>
+            <a href="profile.php" class="close-btn">×</a>
             
             <div class="modal-header">
-                <h2 class="modal-title">To Kill A Mockingbird</h2>
-                <p class="modal-author">Lee, Harper</p>
+                <h2 class="modal-title"><?php echo htmlspecialchars($edit_review['title']); ?></h2>
+                <p class="modal-author"><?php echo htmlspecialchars($edit_review['author']); ?></p>
             </div>
 
             <form method="post" action="">
@@ -344,6 +374,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             </form>
         </div>
     </div>
-
+    <?php endif; ?>
 </body>
 </html>
