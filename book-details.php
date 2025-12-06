@@ -1,102 +1,51 @@
 <?php 
 require_once 'auth.php';
 require('connect-db.php');
-require('book-db.php');
-require('reviews-db.php');
-require('lists-db.php');
+require('clubs-db.php');
+require('posts-db.php'); 
 
 // error catching stuff
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-// Get ISBN from URL parameter
-$isbn = $_GET['isbn'] ?? null;
+// Get club name from URL parameter
+$clubName = $_GET['clubName'] ?? null;
 
-if (!$isbn) {
-    header('Location: homepage.php');
+if (!$clubName) {
+    header('Location: book-clubs.php');
     exit;
 }
 
-// Fetch book details
-$book = getBookByISBN($isbn);
-$want_to_read = getWantToReadList($_SESSION['user_id']);
-$want_to_read_book = array_filter($want_to_read, function($b) use ($isbn) {
-    return $b['ISBN'] === $isbn;
-});
-$read = getReadList($_SESSION['user_id']);
-$read_book = array_filter($read, function($b) use ($isbn) {
-    return $b['ISBN'] === $isbn;
-});
+// Fetch club details
+$club = getClubByName($clubName);
 
-if (!$book) {
-    echo "Book not found.";
+if (!$club) {
+    echo "Club not found.";
     exit;
 }
 
-// get info for "your rating" star display
-$userRating = 0;
-if (isset($_SESSION['user_id'])) {
-    $userRating = getUserRatingForBook($_SESSION['user_id'], $isbn);
-}
+// Check if current user is a member
+$userId = $_SESSION['user_id'];
+$isMember = isUserMember($club['name'], $userId);
 
-// get info for displaying all reviews for the book
-$reviews = getReviewsForBook($isbn);
+// Get posts for this club
+$allPosts = getClubPosts($clubName);
+$posts = organizePostsWithReplies($allPosts);
 
-// let user submit/write a review
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    // if user is not logged in, redirect to login page
-    if (!isset($_SESSION['user_id'])) {
-        header("Location: login.php");
-        exit();
-    }
+// Check if current user is a member
+$userId = $_SESSION['user_id'];
+$isMember = isUserMember($club['name'], $userId);
 
-    /*
-    // check if user has already left a rating for this book
-    $leftRating = getUserRatingForBook($_SESSION['user_id'], $isbn);
-    if ($leftRating != 0) {
-        $errorMessage = "You have already left a review for this book.";
-    }
-        */
-    if (!empty($_POST['submit_review'])) {
-        $result = addReview(
-            $_SESSION['user_id'],      // user ID from session
-            $_POST['isbn'],           // book ISBN
-            $_POST['rating'],         // star rating
-            $_POST['description']     // review text
-        );
-        
-        if ($result === "duplicate") {
-            // user has already left a review
-            echo "<p style='color:red;'>You have already left a review for this book.</p>";
-        } else if ($result === true) {
-            // successful review
-            // refresh the list of reviews
-            $user_reviews = getUserReviews($_SESSION['user_id']);
+// Get any messages from session
+$message = $_SESSION['club_message'] ?? null;
+$messageType = $_SESSION['club_message_type'] ?? 'error';
+unset($_SESSION['club_message'], $_SESSION['club_message_type']);
 
-            // redirect page to avoid duplicate submissions
-            header("Location: book-details.php?isbn=" . $_POST['isbn']);
-            exit();
-        } else {
-            echo "<p style='color:red;'>An unexpected error occurred. Please try again.</p>";
-        }
-    }
-    
-    else if (!empty($_POST['want_to_read'])) {
-        $result = wantToRead(
-            $_SESSION['user_id'],      // user ID from session
-            $_POST['isbn'],           // book ISBN
-        );
-        
-        if ($result === true) {
-            // redirect page to avoid duplicate submissions
-            header("Location: book-details.php?isbn=" . $_POST['isbn']);
-            exit();
-        } else {
-            echo "<p style='color:red;'>An unexpected error occurred. Please try again.</p>";
-        }
-    }
-}
+
+$postMessage = $_SESSION['post_message'] ?? null;
+$postMessageType = $_SESSION['post_message_type'] ?? 'error';
+unset($_SESSION['post_message'], $_SESSION['post_message_type']);
 
 ?>
 
@@ -105,186 +54,129 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?php echo htmlspecialchars($book['title']); ?> - TopShelf</title>
+    <title><?php echo htmlspecialchars($club['name']); ?> - TopShelf</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <?php include('header.php'); ?>
 
-    <!-- error message -->
-    <?php if (!empty($errorMessage)): ?>
-            <div class="error-popup">
-                <strong>Error:</strong> <?php echo htmlspecialchars($errorMessage); ?>
-            </div>
-    <?php endif; ?>
+    <section class="hero">
+        <h1>Book Clubs</h1>
+        <h2 style="padding-top: 2rem; text-transform: uppercase;"><?php echo htmlspecialchars($club['name']); ?></h2>
+        <h2 style="text-transform: capitalize;"><?php echo htmlspecialchars($club['description']); ?></h2>
+    </section>
 
     <div class="container">
-        <div class="book-details">
-            <div class="book-cover-section">
-                <div class="book-cover" 
-                     style="background-image: url('<?php echo htmlspecialchars($book['coverImage']); ?>');">
+        <div class="club-details-container">
+            <?php if ($message): ?>
+                <div class="message message-<?php echo $messageType; ?>">
+                    <?php echo htmlspecialchars($message); ?>
                 </div>
-                <?php if (function_exists('is_logged_in') && is_logged_in()): ?>
-                    <div class="action-buttons">
-                        <!-- only display if not already in want to read list -->
-                        <?php if (empty($want_to_read_book) && empty($read_book)): ?>
-                            <form action="book-details.php?isbn=<?php echo $isbn; ?>" method="POST">
-                                <!-- Send ISBN to backend -->
-                                <input type="hidden" name="isbn" value="<?php echo $isbn; ?>">
-                                <button type="submit" name="want_to_read" value="1" class="action-btn add-to-list-btn">⭐ Want to Read</button>
-                            </form>
-                        <?php elseif (empty($read_book)): ?>
-                            <button class="action-btn in-list-btn" disabled>✔ In Want to Read List</button>
-                        <?php else: ?>
-                            <button class="action-btn in-list-btn" disabled>✔ Read Book</button>    
-                        <?php endif; ?>
+            <?php endif; ?>
             
-                        <a href="?isbn=<?php echo $isbn; ?>&review=1" class="action-btn review-btn">Review</a>
+            <div class="club-stats">
+                <div>
+                    <strong>Members:</strong> <?php echo $club['member_count']; ?>
+                </div>
+            </div>
 
-
-                    <?php if (isset($_GET['review']) && $_GET['review'] == 1): ?>
-                        <div style="border:1px solid #ccc; padding:15px; margin-top:20px;">
-                            <h3>Write a Review</h3>
-
-                            <form action="book-details.php?isbn=<?php echo $isbn; ?>" method="POST">
-                                <!-- Send ISBN to backend -->
-                                <input type="hidden" name="isbn" value="<?php echo $isbn; ?>">
-
-                                <label>Rating:</label><br>
-                                <select name="rating" required>
-                                    <option value="">Select...</option>
-                                    <option value="5">5 - Excellent</option>
-                                    <option value="4">4 - Good</option>
-                                    <option value="3">3 - Average</option>
-                                    <option value="2">2 - Poor</option>
-                                    <option value="1">1 - Terrible</option>
-                                </select>
-                                <br><br>
-
-                                <label>Your Review:</label><br>
-                                <textarea name="description" rows="4" cols="40" required></textarea>
-                                <br><br>
-
-                                <button type="submit" name="submit_review" value="1">Submit Review</button>
-                            </form>
-
-                            <br>
-                            <a href="book-details.php?isbn=<?php echo $isbn; ?>">Cancel</a>
-                        </div>
-                    <?php endif; ?>
-                        <div class="star-selector">
-                            <?php 
-                                $filled = $userRating;
-                                $empty = 5 - $filled;
-
-                                echo str_repeat('<span>★</span>', $filled);
-                                echo str_repeat('<span>☆</span>', $empty);
-
-                            
-                            ?>
-                        </div>
-                        <div class="rating-label">Your Rating</div>
-                    </div>
+            <div class="club-actions">
+                <?php if ($isMember): ?>
+                    <form method="POST" action="club-actions.php" style="display: inline;">
+                        <input type="hidden" name="action" value="leave">
+                        <input type="hidden" name="club_name" value="<?php echo htmlspecialchars($club['name']); ?>">
+                        <button type="submit" class="btn btn-leave" onclick="return confirm('Are you sure you want to leave this club?')">Leave Club</button>
+                    </form>
+                    <span style="margin-left: 1rem; color: #28a745; font-weight: bold;">✓ Member</span>
                 <?php else: ?>
-                    <p><strong>Sign in to save or review this book!</strong></p>
+                    <form method="POST" action="club-actions.php" style="display: inline;">
+                        <input type="hidden" name="action" value="join">
+                        <input type="hidden" name="club_name" value="<?php echo htmlspecialchars($club['name']); ?>">
+                        <button type="submit" class="btn btn-join">Join Club</button>
+                    </form>
                 <?php endif; ?>
             </div>
 
-            <div class="book-info-section">
-                <h1 class="book-title"><?php echo htmlspecialchars($book['title']); ?></h1>
-                <p class="book-author"><?php echo htmlspecialchars($book['author']); ?></p>
-
-                <?php
-                    $rating = (float)($book['avgRating'] ?? 0);
-                    $ratingCount = (int)($book['ratingCount'] ?? 0);
-                    $reviewCount = (int)($book['reviewCount'] ?? 0);
-                    $filledStars = floor($rating);
-                    $halfStar = ($rating - $filledStars >= 0.5);
-                    $emptyStars = 5 - $filledStars - ($halfStar ? 1 : 0);
-                ?>
-                <div class="star-rating">
-                    <div>
-                        <?php echo str_repeat('★', $filledStars); ?>
-                        <?php if ($halfStar) echo '★'; ?>
-                        <?php echo str_repeat('☆', $emptyStars); ?>
+            <div class="posts-section">
+                <h3>Discussion</h3>
+                
+                <?php if ($isMember): ?>
+                    <!-- New Post Form -->
+                    <div class="post-form">
+                        <form method="POST" action="post-actions.php">
+                            <input type="hidden" name="club_name" value="<?php echo htmlspecialchars($club['name']); ?>">
+                            <textarea name="content" placeholder="Share your thoughts with the club..." required></textarea>
+                            <button type="submit">Post</button>
+                        </form>
                     </div>
-                    <span class="rating-text">
-                        <?php echo number_format($rating, 2); ?> · 
-                        <?php echo number_format($ratingCount); ?> Ratings · 
-                        <?php echo number_format($reviewCount); ?> Reviews
-                    </span>
-                </div>
-
-                <div class="book-description">
-                    <p><?php echo nl2br(htmlspecialchars($book['description'])); ?></p>
-                </div>
-                
-                <!-- book reviews -->
-                <h2 style="margin-bottom: 0.5rem;">Book Reviews</h2>
-                <div class="reviews-table-container">
-                    <table class="reviews-table">
-                        <thead>
-                            <tr>
-                                <th>Username</th>
-                                <th>Rating</th>
-                                <th>Review</th>
-                                <th>Date Added</th>
-                                <th></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php if (!empty($reviews)):?>
-                                <?php foreach ($reviews as $index => $review): ?>
-                                <tr>           
-                                    <td>
-                                        <!-- username -->
-                                        <?php echo htmlspecialchars($review['userID']); ?>
-                                    </td>                         
-                                    <td> 
-                                        <!-- rating -->
-                                        <div class="star-display">
-                                            <?php
-                                                $rating = (float)$review['rating'];
-                                                $filledStars = floor($rating);
-                                                echo str_repeat('★', $filledStars);
-                                                echo str_repeat('☆', 5 - $filledStars);
-                                            ?>
+                    
+                    <!-- Posts List -->
+                    <?php if (!empty($posts)): ?>
+                        <div class="posts-list">
+                            <?php foreach ($posts as $post): 
+                                $postID = generatePostID($post['userID'], $post['bookClubName'], $post['timestamp']);
+                            ?>
+                                <div class="post">
+                                    <div class="post-header">
+                                        <span class="post-author"><?php echo htmlspecialchars($post['userID']); ?></span>
+                                        <span class="post-timestamp"><?php echo date('F j, Y g:i A', strtotime($post['timestamp'])); ?></span>
+                                    </div>
+                                    <div class="post-content">
+                                        <?php echo nl2br(htmlspecialchars($post['content'])); ?>
+                                    </div>
+                                    <div class="post-actions">
+                                        <button class="reply-btn" onclick="toggleReplyForm('<?php echo $postID; ?>')">Reply</button>
+                                    </div>
+                                    
+                                    <!-- Reply Form -->
+                                    <div class="reply-form" id="reply-form-<?php echo $postID; ?>">
+                                        <form method="POST" action="post-actions.php">
+                                            <input type="hidden" name="club_name" value="<?php echo htmlspecialchars($club['name']); ?>">
+                                            <input type="hidden" name="parent_post_id" value="<?php echo htmlspecialchars($postID); ?>">
+                                            <textarea name="content" placeholder="Write your reply..." required></textarea>
+                                            <button type="submit">Reply</button>
+                                        </form>
+                                    </div>
+                                    
+                                    <!-- Replies -->
+                                    <?php if (!empty($post['replies'])): ?>
+                                        <div class="replies">
+                                            <?php foreach ($post['replies'] as $reply): ?>
+                                                <div class="reply">
+                                                    <div class="post-header">
+                                                        <span class="post-author"><?php echo htmlspecialchars($reply['userID']); ?></span>
+                                                        <span class="post-timestamp"><?php echo date('F j, Y g:i A', strtotime($reply['timestamp'])); ?></span>
+                                                    </div>
+                                                    <div class="post-content">
+                                                        <?php echo nl2br(htmlspecialchars($reply['content'])); ?>
+                                                    </div>
+                                                </div>
+                                            <?php endforeach; ?>
                                         </div>
-                                        <div style="font-size: 0.85rem; color: #666; margin-top: 0.25rem;">
-                                            <?php echo number_format($rating, 2); ?>
-                                        </div>
-                                    </td>
-
-                                    <td>
-                                        <!-- review text -->
-                                        <div class="review-text">
-                                            <?php echo htmlspecialchars($review['description']); ?>
-                                        </div>
-                                    </td>
-
-                                    <td>
-                                        <!-- date added -->
-                                        <?php echo htmlspecialchars($review['timestamp']); ?>
-                                    </td>
-
-                                   
-                                 </tr>
+                                    <?php endif; ?>
+                                </div>
                             <?php endforeach; ?>
+                        </div>
                     <?php else: ?>
-                        <tr>
-                            <td colspan="7" style="text-align: center; padding: 2rem; color: #666;">
-                                No reviews yet.
-                            </td>
-                        </tr>
+                        <div class="no-posts">
+                            <p>No posts yet. Be the first to start a discussion!</p>
+                        </div>
                     <?php endif; ?>
-                        </tbody>
-                    </table>
-                </div>
-                
-
-                </div>
+                    
+                <?php else: ?>
+                    <div class="member-only-notice">
+                        Join this club to participate in discussions!
+                    </div>
+                <?php endif; ?>
             </div>
         </div>
     </div>
+
+    <script>
+        function toggleReplyForm(postId) {
+            const replyForm = document.getElementById('reply-form-' + postId);
+            replyForm.classList.toggle('active');
+        }
+    </script>
 </body>
 </html>
