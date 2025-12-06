@@ -43,7 +43,7 @@ if (isset($_SESSION['user_id'])) {
 // get info for displaying all reviews for the book
 $reviews = getReviewsForBook($isbn);
 
-// Check if user has already reviewed this book
+// check if user has already reviewed this book
 $userHasReviewed = false;
 $errorMessage = '';
 if (isset($_SESSION['user_id'])) {
