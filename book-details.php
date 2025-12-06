@@ -43,6 +43,9 @@ if (isset($_SESSION['user_id'])) {
 // get info for displaying all reviews for the book
 $reviews = getReviewsForBook($isbn);
 
+// check if we should show the review modal
+$show_review_modal = isset($_GET['review']) && $_GET['review'] == 1;
+
 // let user submit/write a review
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // if user is not logged in, redirect to login page
@@ -107,6 +110,36 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo htmlspecialchars($book['title']); ?> - TopShelf</title>
     <link rel="stylesheet" href="styles.css">
+    <style>
+        /* Star rating input styling for review form */
+        .review-modal .star-rating-input {
+            display: flex;
+            flex-direction: row-reverse;
+            justify-content: center;
+            gap: 0.5rem;
+            font-size: 2rem;
+            margin: 1rem 0;
+        }
+        
+        .review-modal .star-rating-input input[type="radio"] {
+            display: none;
+        }
+        
+        .review-modal .star-rating-input label {
+            cursor: pointer;
+            color: #ddd;
+        }
+        
+        .review-modal .star-rating-input input[type="radio"]:checked ~ label,
+        .review-modal .star-rating-input input[type="radio"]:checked + label {
+            color: #ffd700;
+        }
+        
+        .review-modal .star-rating-input label:hover,
+        .review-modal .star-rating-input label:hover ~ label {
+            color: #ffd700;
+        }
+    </style>
 </head>
 <body>
     <?php include('header.php'); ?>
@@ -140,38 +173,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         <?php endif; ?>
             
                         <a href="?isbn=<?php echo $isbn; ?>&review=1" class="action-btn review-btn">Review</a>
-
-
-                    <?php if (isset($_GET['review']) && $_GET['review'] == 1): ?>
-                        <div style="border:1px solid #ccc; padding:15px; margin-top:20px;">
-                            <h3>Write a Review</h3>
-
-                            <form action="book-details.php?isbn=<?php echo $isbn; ?>" method="POST">
-                                <!-- Send ISBN to backend -->
-                                <input type="hidden" name="isbn" value="<?php echo $isbn; ?>">
-
-                                <label>Rating:</label><br>
-                                <select name="rating" required>
-                                    <option value="">Select...</option>
-                                    <option value="5">5 - Excellent</option>
-                                    <option value="4">4 - Good</option>
-                                    <option value="3">3 - Average</option>
-                                    <option value="2">2 - Poor</option>
-                                    <option value="1">1 - Terrible</option>
-                                </select>
-                                <br><br>
-
-                                <label>Your Review:</label><br>
-                                <textarea name="description" rows="4" cols="40" required></textarea>
-                                <br><br>
-
-                                <button type="submit" name="submit_review" value="1">Submit Review</button>
-                            </form>
-
-                            <br>
-                            <a href="book-details.php?isbn=<?php echo $isbn; ?>">Cancel</a>
-                        </div>
-                    <?php endif; ?>
+                    
                         <div class="star-selector">
                             <?php 
                                 $filled = $userRating;
@@ -286,5 +288,44 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             </div>
         </div>
     </div>
+
+    <!-- Write Review Modal -->
+    <?php if ($show_review_modal): ?>
+    <div class="modal-overlay active review-modal">
+        <div class="modal-content">
+            <a href="book-details.php?isbn=<?php echo $isbn; ?>" class="close-btn">×</a>
+            
+            <div class="modal-header">
+                <h2 class="modal-title"><?php echo htmlspecialchars($book['title']); ?></h2>
+                <p class="modal-author"><?php echo htmlspecialchars($book['author']); ?></p>
+            </div>
+
+            <form method="post" action="book-details.php?isbn=<?php echo $isbn; ?>">
+                <input type="hidden" name="isbn" value="<?php echo $isbn; ?>">
+                
+                <div class="rating-section">
+                    <label class="rating-label">My Rating:</label>
+                    <div class="star-rating-input">
+                        <?php for ($i = 5; $i >= 1; $i--): ?>
+                            <input type="radio" name="rating" value="<?php echo $i; ?>" id="star<?php echo $i; ?>" required>
+                            <label for="star<?php echo $i; ?>">☆</label>
+                        <?php endfor; ?>
+                    </div>
+                </div>
+
+                <div class="review-section">
+                    <label class="rating-label">My Review:</label>
+                    <textarea name="description" class="review-textarea" placeholder="Write your review here..." required></textarea>
+                </div>
+
+                <div class="modal-actions">
+                    <a href="book-details.php?isbn=<?php echo $isbn; ?>" class="cancel-btn">Cancel</a>
+                    <button type="submit" name="submit_review" value="1" class="save-btn">Submit Review</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <?php endif; ?>
+
 </body>
 </html>
