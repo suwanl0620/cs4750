@@ -139,6 +139,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             font-size: 2rem;
             margin: 1rem 0;
         }
+
+        .modal-overlay .modal-header {
+            text-align: center;
+        }
         
         .review-modal .star-rating-input input[type="radio"] {
             display: none;
@@ -158,6 +162,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         .review-modal .star-rating-input label:hover ~ label {
             color: #ffd700;
         }
+        
     </style>
 </head>
 <body>
