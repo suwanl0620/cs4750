@@ -89,7 +89,7 @@
 
     }
 
-
+    /*
     function getUserReviewByBook($userID, $isbn) {
         global $db;
 
@@ -104,7 +104,54 @@
 
         return $results;
     }
+        */
+    
+    function updateReview($userID, $ISBN, $rating, $description) {
+        try {
+            global $db;
         
+            $query = "UPDATE Reviews
+                        SET rating = :rating,
+                        description = :description,
+                        timestamp = CURRENT_TIMESTAMP
+                        WHERE userID = :userID AND ISBN = :ISBN;";
+
+            $statement = $db->prepare($query);
+            $statement->bindValue(':rating', $rating);
+            $statement->bindValue(':description', $description);
+            $statement->bindValue(':userID', $userID);
+            $statement->bindValue(':ISBN', $ISBN);
+            
+            $statement->execute();
+            $statement->closeCursor();
+            return true;
+        } catch (PDOException $e) {
+            return false;
+        }
+
+    }
+
+    function deleteReview($userID, $ISBN) {
+        try {
+            global $db;
+
+            $query = "DELETE FROM Reviews
+                    WHERE userID = :userID AND ISBN = :ISBN;";
+
+            $statement = $db->prepare($query);
+            $statement->bindValue(':userID', $userID);
+            $statement->bindValue(':ISBN', $ISBN);
+            $statement->execute();
+            $statement->closeCursor();
+
+            return true;
+        } catch (PDOException $e) {
+            return false;
+        }
+        
+
+
+    }
 
 
 ?>

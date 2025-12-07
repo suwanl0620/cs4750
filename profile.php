@@ -10,7 +10,20 @@ ini_set('display_errors', 1);
 $user_reviews = getUserReviews($_SESSION['user_id']);
 $want_to_read = getWantToReadList($_SESSION['user_id']);
 $read_list = getReadList($_SESSION['user_id']);
-$request_to_edit = null;
+
+// check if we should show edit modal
+$show_modal = false;
+$edit_review = null;
+if (isset($_GET['edit_isbn'])) {
+    // find review to edit
+    foreach ($user_reviews as $review) {
+        if ($review['ISBN'] === $_GET['edit_isbn']) {
+            $edit_review = $review;
+            $show_modal = true;
+            break;
+        }   
+    }
+}
 
 // let user edit lists
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -20,8 +33,33 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         exit();
     }
 
-    if (!empty($_POST['editBtn'])) {
-        $request_to_edit = getUserReviews($_SESSION['user_id'], $_POST['isbn']);
+    // update review
+    if (!empty($_POST['update_review'])) {
+        $result = updateReview(
+            $_SESSION['user_id'],
+            $_POST['isbn'],
+            $_POST['rating'],
+            $_POST['review_text']
+        );
+
+        if ($result === true) {
+            header("Location: profile.php");
+            exit();
+        } else {
+            echo "<p style='color:red;'>An unexpected error occurred. Please try again.</p>";
+        }
+    }
+
+      // Delete review
+      else if (!empty($_POST['delete_review'])) {
+        $result = deleteReview($_SESSION['user_id'], $_POST['isbn']);
+        
+        if ($result === true) {
+            header("Location: profile.php");
+            exit();
+        } else {
+            echo "<p style='color:red;'>An unexpected error occurred. Please try again.</p>";
+        }
     }
 
     // move book from want to read to read list
@@ -89,6 +127,29 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Profile - TopShelf</title>
     <link rel="stylesheet" href="styles.css">
+    <style>
+        /* style override for edit review popup*/
+        /* fix star rating to show correctly with row-reverse */
+        .star-rating-input {
+            flex-direction: row-reverse;
+        }
+        
+        /* color the checked star AND all stars after it (which appear left due to reverse) */
+        .star-rating-input input[type="radio"]:checked ~ label,
+        .star-rating-input input[type="radio"]:checked + label {
+            color: #ffd700;
+        }
+
+        /* Center the modal header */
+        .modal-overlay .modal-header {
+            text-align: center;
+        }
+        
+        /* Center the star rating input */
+        .modal-overlay .star-rating-input {
+            justify-content: center;
+        }
+    </style>
 </head>
     <body>
     <?php include('header.php'); ?>
@@ -146,17 +207,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             <td><?php echo htmlspecialchars($review['timestamp']); ?></td>
                             <td>
                                 <div class="action-buttons">
-                                    <!-- EDIT BUTTON -->
-                                    <!--<button class="edit-btn">Edit</button>-->
-                                    <form action="profile.php?isbn=<?php echo urlencode($review['ISBN']); ?>" method="POST">
-                                        <input type="submit" value="Edit"
-                                               name="editBtn" class="edit-btn"
-                                        />                                       
-                                        <input type="hidden" name="isbn" value="<?php echo $isbn; ?>"/>
+                                    <!-- edit button -->
+                                    <a href="profile.php?edit_isbn=<?php echo urlencode($review['ISBN']); ?>" 
+                                       class="edit-btn" style="text-decoration: none; display: inline-block;">Edit</a>
+                                 
+                                    <!-- delete button -->
+                                    <form action="profile.php" method="POST" style="display: inline;">
+                                        <input type="hidden" name="isbn" value="<?php echo htmlspecialchars($review['ISBN']); ?>">
+                                        <button type="submit" name="delete_review" value="1" class="delete-btn" onclick="return confirm('Are you sure you want to delete this review?');">Delete</button>
+                                    </form>
 
-
-                                    <!-- Add delete functionality here -->
-                                    <button class="delete-btn">Delete</button>
                                 </div>
                             </td>
                         </tr>
@@ -305,45 +365,43 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     </div>
 
     <!-- Edit Review Modal (add condition to show/hide based on PHP logic) -->
-    <div class="modal-overlay">
+    <?php if ($show_modal && $edit_review): ?>
+    <div class="modal-overlay active">
         <div class="modal-content">
-            <a href="#" class="close-btn">×</a>
+            <a href="profile.php" class="close-btn">×</a>
             
             <div class="modal-header">
-                <h2 class="modal-title">To Kill A Mockingbird</h2>
-                <p class="modal-author">Lee, Harper</p>
+                <h2 class="modal-title"><?php echo htmlspecialchars($edit_review['title']); ?></h2>
+                <p class="modal-author"><?php echo htmlspecialchars($edit_review['author']); ?></p>
             </div>
 
-            <form method="post" action="">
+            <form method="post" action="profile.php">
+                <input type="hidden" name="isbn" value="<?php echo htmlspecialchars($edit_review['ISBN']); ?>">
                 <div class="rating-section">
                     <label class="rating-label">My Rating:</label>
                     <div class="star-rating-input">
                         <!-- Implement star rating system here -->
-                        <input type="radio" name="rating" value="5" id="star5">
-                        <label for="star5">☆</label>
-                        <input type="radio" name="rating" value="4" id="star4">
-                        <label for="star4">☆</label>
-                        <input type="radio" name="rating" value="3" id="star3">
-                        <label for="star3">☆</label>
-                        <input type="radio" name="rating" value="2" id="star2">
-                        <label for="star2">☆</label>
-                        <input type="radio" name="rating" value="1" id="star1">
-                        <label for="star1">☆</label>
+                        
+                        <?php for ($i = 5; $i >= 1; $i--): ?>
+                            <input type="radio" name="rating" value="<?php echo $i; ?>" id="star<?php echo $i; ?>" <?php echo (floor($edit_review['rating']) == $i) ? 'checked' : ''; ?>>                            
+                            <label for="star<?php echo $i; ?>">☆</label>
+                        <?php endfor; ?>
+
                     </div>
                 </div>
 
                 <div class="review-section">
                     <label class="rating-label">My Review:</label>
-                    <textarea name="review_text" class="review-textarea" placeholder="Write your review here..."></textarea>
+                    <textarea name="review_text" class="review-textarea" placeholder="Write your review here..."><?php echo htmlspecialchars($edit_review['description']); ?></textarea>
                 </div>
 
                 <div class="modal-actions">
-                    <a href="#" class="cancel-btn">Cancel</a>
-                    <button type="submit" class="save-btn">Save</button>
+                    <a href="profile.php" class="cancel-btn">Cancel</a>
+                    <button type="submit" name="update_review" value="1" class="save-btn">Save</button>
                 </div>
             </form>
         </div>
     </div>
-
+    <?php endif; ?>
 </body>
 </html>
