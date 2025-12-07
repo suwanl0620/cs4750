@@ -4,8 +4,8 @@ require('connect-db.php');
 require('reviews-db.php');
 require('lists-db.php');
 
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
+// error_reporting(E_ALL);
+// ini_set('display_errors', 1);
 
 $user_reviews = getUserReviews($_SESSION['user_id']);
 $want_to_read = getWantToReadList($_SESSION['user_id']);

@@ -7,18 +7,6 @@ require('book-db.php');
 $listName = $_GET['list'] ?? 'Hardcover Fiction';
 $date = $_GET['date'] ?? '2025-09-27';  // Default date
 
-// take in post requests to set variables (otherwise default)
-/*
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    // if hardcover button clicked
-    if (!empty($_POST[]) ) {
-        $listname = "Hardcover Nonfiction";
-    }
-    // if fiction button clicked
-    // if combined button
-}
-    */
-
 // Fetch the books
 $top_books = getBooksByList($listName, $date);
 
