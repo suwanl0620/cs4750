@@ -92,13 +92,15 @@ function isActiveList($current, $selected) {
                         <?php
                             $rating = (float)($book['avgRating'] ?? 0);
                             $filledStars = floor($rating);
-                            $halfStar = ($rating - $filledStars >= 0.5);
-                            $emptyStars = 5 - $filledStars - ($halfStar ? 1 : 0);
+                            $emptyStars = 5 - $filledStars;
+                            if ($rating - $filledStars >= 0.5) {
+                                $emptyStars -= 1;
+                                $filledStars += 1;
+                            }
                         ?>
                         <div class="star-rating">
-                            <?php echo str_repeat('★', $filledStars); ?>
-                            <?php if ($halfStar) echo '✩'; ?>
-                            <?php echo str_repeat('☆', $emptyStars); ?>
+                            <?php echo str_repeat('★', $filledStars);?>
+                            <?php echo str_repeat('☆', $emptyStars);?>
                             <span style="font-size:0.9rem; color:#666;">
                                 (<?php echo htmlspecialchars(number_format($rating, 1)); ?> / 5, 
                                 <?php echo htmlspecialchars($book['ratingCount']); ?> reviews)
