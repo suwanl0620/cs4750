@@ -1,4 +1,3 @@
-# Books(ISBN, title, author, description, coverImage)
 CREATE TABLE Books (
 	ISBN VARCHAR(255) PRIMARY KEY,
 title VARCHAR(255) NOT NULL,
@@ -7,31 +6,27 @@ description VARCHAR(255) NOT NULL,
 coverImage VARCHAR(255) NOT NULL
 );
 
-# Users(userID, password)
 CREATE TABLE Users (
 	userID VARCHAR(255) PRIMARY KEY,
 	password VARCHAR(255) NOT NULL
 	);
 
-# BestsellerLists(listName, date)
 CREATE TABLE BestsellerLists  (
 	listName VARCHAR(255) ,
 	date VARCHAR(255),
 	PRIMARY KEY (listName, date)
 	);
 
-# Bestsellers(listName, date, ISBN, listRank)
 CREATE TABLE Bestsellers (
 	listName VARCHAR(255),
 	date VARCHAR(255),
-ISBN VARCHAR(255),
+	ISBN VARCHAR(255),
 	listRank INT, 
 	PRIMARY KEY (listName, date, ISBN),
 	FOREIGN KEY (listName, date) REFERENCES BestsellerLists(listName, date),
     	FOREIGN KEY (ISBN) REFERENCES Books(ISBN)
 	);
 
-# Reviews(userID, ISBN, rating, description, timestamp)
 CREATE TABLE Reviews  (
 	userID VARCHAR(255) ,
 	ISBN VARCHAR(255),
@@ -43,13 +38,11 @@ CREATE TABLE Reviews  (
 	FOREIGN KEY (ISBN) REFERENCES Books(ISBN)
 	);
 
-# BookClubs(name, description)
 CREATE TABLE BookClubs (
 	name VARCHAR(255) PRIMARY KEY,
 	description VARCHAR(10000)
 	);
 
-# Posts(userID, bookClubName, timestamp, content, parentPostID)
 CREATE TABLE Posts (
 	userID VARCHAR(255),
 	bookClubName VARCHAR(255),
@@ -61,7 +54,6 @@ CREATE TABLE Posts (
 	FOREIGN KEY (bookClubName) REFERENCES BookClubs(name)
 	);
 
-# ReadBooks(userID, ISBN, timestamp)
 CREATE TABLE ReadBooks (
 	userID VARCHAR(255),
 	ISBN VARCHAR(255),
@@ -71,16 +63,14 @@ CREATE TABLE ReadBooks (
 	FOREIGN KEY (ISBN) REFERENCES Books(ISBN)
 	);
 
-# WantToRead(userID, ISBN)
 CREATE TABLE WantToRead (
 	userID VARCHAR(255),
 	ISBN VARCHAR(255),
 	PRIMARY KEY(userID, ISBN),
-FOREIGN KEY (userID) REFERENCES Users(userID),
+	FOREIGN KEY (userID) REFERENCES Users(userID),
 	FOREIGN KEY (ISBN) REFERENCES Books(ISBN)
 	);
 
-# Membership(userID, bookClubName)
 CREATE TABLE Membership (
 	userID VARCHAR(255),
 	bookClubName VARCHAR(255),
@@ -89,7 +79,6 @@ CREATE TABLE Membership (
 	FOREIGN KEY (bookClubName) REFERENCES BookClubs(name)
 	);
 
-# Create bestseller lists by list name (6)
 INSERT INTO BestsellerLists VALUES
 ('Hardcover Nonfiction', '2025-10-18'),
 ('Hardcover Nonfiction', '2025-09-27'),
@@ -98,7 +87,6 @@ INSERT INTO BestsellerLists VALUES
 ('Combined Print & E-Book Fiction', '2025-10-18'),
 ('Combined Print & E-Book Fiction', '2025-09-27');
 
-# Add Hardcover Fiction book data (15)
 INSERT IGNORE INTO Books (ISBN, title, author, description, coverImage) VALUES
 ('9798217154043', 'REMAIN', 'Nicholas Sparks with M. Night Shyamalan',
  'A New York architect moves to Cape Cod, where he enters a relationship that brings up a lot of questions.',
@@ -146,7 +134,6 @@ INSERT IGNORE INTO Books (ISBN, title, author, description, coverImage) VALUES
  'A literary mystery that explores obsession, loss, and the nature of art.',
  'https://static01.nyt.com/bestsellers/images/9780593230859.jpg');
 
-# Add books into Hardcover Fiction bestseller list (15)
 INSERT INTO Bestsellers (listName, date, ISBN, listRank) VALUES
 ('Hardcover Fiction', '2025-10-18', '9798217154043', 1),
 ('Hardcover Fiction', '2025-10-18', '9781538774700', 2),
@@ -164,7 +151,6 @@ INSERT INTO Bestsellers (listName, date, ISBN, listRank) VALUES
 ('Hardcover Fiction', '2025-10-18', '9780063205395', 14),
 ('Hardcover Fiction', '2025-10-18', '9780593230859', 15);
 
-# Add Combined Print & E-Book Fiction book data (15)
 INSERT IGNORE INTO Books (ISBN, title, author, description, coverImage) VALUES
 ('9781538774700', 'GONE BEFORE GOODBYE', 'Reese Witherspoon and Harlan Coben', 'When a mysterious man disappears, the former combat surgeon giving him medical assistance goes on the lam.', 'https://static01.nyt.com/bestsellers/images/9781538774700.jpg'),
 ('9798217154043', 'REMAIN', 'Nicholas Sparks with M. Night Shyamalan', 'A New York architect moves to Cape Cod, where he enters a relationship that brings up a lot of questions.', 'https://static01.nyt.com/bestsellers/images/9798217154043.jpg'),
@@ -182,7 +168,6 @@ INSERT IGNORE INTO Books (ISBN, title, author, description, coverImage) VALUES
 ('9780316567855', 'THE ACADEMY', 'Elin Hilderbrand and Shelby Cunningham', 'Harmful rumors cause trouble for the students and staff at a New England boarding school.', 'https://static01.nyt.com/bestsellers/images/9780316567855.jpg'),
 ('9781538742570', 'THE HOUSEMAID', 'Freida McFadden', 'Troubles surface when a woman looking to make a fresh start takes a job in the home of the Winchesters.', 'https://static01.nyt.com/bestsellers/images/9781538742570.jpg');
 
-# Add books into Combined Print & E-Book Fiction bestseller list (15)
 INSERT INTO Bestsellers (listName, date, ISBN, listRank) VALUES
 ('Combined Print & E-Book Fiction', '2025-10-18', '9781538774700', 1),
 ('Combined Print & E-Book Fiction', '2025-10-18', '9798217154043', 2),
@@ -200,7 +185,6 @@ INSERT INTO Bestsellers (listName, date, ISBN, listRank) VALUES
 ('Combined Print & E-Book Fiction', '2025-10-18', '9780316567855', 14),
 ('Combined Print & E-Book Fiction', '2025-10-18', '9781538742570', 15);
 
-# Add Hardcover Nonfiction book data (15)
 INSERT IGNORE INTO Books (ISBN, title, author, description, coverImage) VALUES
 ('9781668205877', 'UNDER SIEGE', 'Eric Trump', 'The executive vice president of the Trump Organization shares his belief that attacks on his family are attacks on America.', 'https://static01.nyt.com/bestsellers/images/9781668205877.jpg'),
 ('9780593296967', '1929', 'Andrew Ross Sorkin', 'The New York Times journalist and CNBC host looks at the fight between Washington and Wall Street that fueled a historic crash of the stock market.', 'https://static01.nyt.com/bestsellers/images/9780593296967.jpg'),
@@ -218,7 +202,6 @@ INSERT IGNORE INTO Books (ISBN, title, author, description, coverImage) VALUES
 ('9780063417533', 'DOES ANYONE ELSE FEEL THIS WAY?', 'Eli Rallo', 'The social media content creator discusses difficulties people may encounter in their 20s.', 'https://static01.nyt.com/bestsellers/images/9780063417533.jpg'),
 ('9781324094647', 'THE GALES OF NOVEMBER', 'John U. Bacon', 'An account of the sinking of the Edmund Fitzgerald, an American Great Lakes freighter, 50 years ago.', 'https://static01.nyt.com/bestsellers/images/9781324094647.jpg');
 
-# Add books into Hardcover Nonfiction bestseller list (15)
 INSERT INTO Bestsellers (listName, date, ISBN, listRank) VALUES
 ('Hardcover Nonfiction', '2025-10-18', '9781668205877', 1),
 ('Hardcover Nonfiction', '2025-10-18', '9780593296967', 2),
@@ -236,7 +219,6 @@ INSERT INTO Bestsellers (listName, date, ISBN, listRank) VALUES
 ('Hardcover Nonfiction', '2025-10-18', '9780063417533', 14),
 ('Hardcover Nonfiction', '2025-10-18', '9781324094647', 15);
 
-# Add Hardcover Fiction book data (15)
 INSERT IGNORE INTO Books (ISBN, title, author, description, coverImage) VALUES
 ('9780593972700', 'ALCHEMISED', 'SenLinYu', 'After the war, an imprisoned alchemist is sent to a necromancer to recover her lost memories.', 'https://static01.nyt.com/bestsellers/images/9780593972700.jpg'),
 ('9780385546898', 'THE SECRET OF SECRETS', 'Dan Brown', 'As he searches for the missing noetic scientist he has been seeing, Robert Langdon discovers something regarding a secret project.', 'https://static01.nyt.com/bestsellers/images/9780385546898.jpg'),
@@ -254,7 +236,6 @@ INSERT IGNORE INTO Books (ISBN, title, author, description, coverImage) VALUES
 ('9780593595039', 'BUCKEYE', 'Patrick Ryan', 'Consequences created by a secret forged between members of two families in a small Ohio town affect a new generation.', 'https://static01.nyt.com/bestsellers/images/9780593595039.jpg'),
 ('9781668059869', 'WE LOVE YOU, BUNNY', 'Mona Awad', 'A debut novelist is kidnapped by her former frenemies, who recount their dark adventures.', 'https://static01.nyt.com/bestsellers/images/9781668059869.jpg');
 
-# Add books into Hardcover Fiction bestseller list (15)
 INSERT INTO Bestsellers (listName, date, ISBN, listRank) VALUES
 ('Hardcover Fiction', '2025-09-27', '9780593972700', 1),
 ('Hardcover Fiction', '2025-09-27', '9780385546898', 2),
@@ -272,7 +253,6 @@ INSERT INTO Bestsellers (listName, date, ISBN, listRank) VALUES
 ('Hardcover Fiction', '2025-09-27', '9780593595039', 14),
 ('Hardcover Fiction', '2025-09-27', '9781668059869', 15);
 
-# Add Combined Print & E-Book Fiction book data (15)
 INSERT IGNORE INTO Books (ISBN, title, author, description, coverImage) VALUES
 ('9780593972700', 'ALCHEMISED', 'SenLinYu', 'After the war, an imprisoned alchemist is sent to a necromancer to recover her lost memories.', 'https://static01.nyt.com/bestsellers/images/9780593972700.jpg'),
 ('9781963135480', 'THE PRIMAL OF BLOOD AND BONE', 'Jennifer L. Armentrout', 'The sixth book in the Blood and Ash series. The Blood Crown has fallen and the Primal of Death must be stopped.', 'https://static01.nyt.com/bestsellers/images/9781963135480.jpg'),
@@ -290,7 +270,6 @@ INSERT IGNORE INTO Books (ISBN, title, author, description, coverImage) VALUES
 ('9780307700155', 'THE LONELINESS OF SONIA AND SUNNY', 'Kiran Desai', 'A novelist and a journalist, whose grandparents once tried to arrange their union, go on a search for happiness together.', 'https://static01.nyt.com/bestsellers/images/9780307700155.jpg'),
 ('9781464227301', 'THE SURROGATE MOTHER', 'Freida McFadden', 'Abby’s personal assistant, who offers to be her surrogate, also carries an unspeakable secret.', 'https://static01.nyt.com/bestsellers/images/9781464227301.jpg');
 
-# Add books into Combined Print & E-Book Fiction bestseller list (15)
 INSERT INTO Bestsellers (listName, date, ISBN, listRank) VALUES
 ('Combined Print & E-Book Fiction', '2025-09-27', '9780593972700', 1),
 ('Combined Print & E-Book Fiction', '2025-09-27', '9781963135480', 2),
@@ -308,7 +287,6 @@ INSERT INTO Bestsellers (listName, date, ISBN, listRank) VALUES
 ('Combined Print & E-Book Fiction', '2025-09-27', '9780307700155', 14),
 ('Combined Print & E-Book Fiction', '2025-09-27', '9781464227301', 15);
 
-# Add Hardcover Nonfiction book data (15)
 INSERT IGNORE INTO Books (ISBN, title, author, description, coverImage) VALUES
 ('9781668211656', '107 DAYS', 'Kamala Harris', 'The former vice president recounts her abbreviated campaign to become president in 2024.', 'https://static01.nyt.com/bestsellers/images/9781668211656.jpg'),
 ('9781984862105', 'POEMS & PRAYERS', 'Matthew McConaughey', 'The actor and author of “Greenlights” explores elements of belief and reason that make up our lives.', 'https://static01.nyt.com/bestsellers/images/9781984862105.jpg'),
@@ -326,7 +304,6 @@ INSERT IGNORE INTO Books (ISBN, title, author, description, coverImage) VALUES
 ('9781668065426', 'STORIES FROM A STRANGER', 'Hunter Prosper', 'An I.C.U. nurse brings together revealing stories told by an assortment of people.', 'https://static01.nyt.com/bestsellers/images/9781668065426.jpg'),
 ('9781631496080', 'WE THE PEOPLE', 'Jill Lepore', 'The author of “These Truths” examines the history of the U.S. Constitution and challenges its interpretation by the Supreme Court and the theory of originalism.', 'https://static01.nyt.com/bestsellers/images/9781631496080.jpg');
 
-# Add Hardcover Nonfiction book data (15)
 INSERT INTO Bestsellers (listName, date, ISBN, listRank) VALUES
 ('Hardcover Nonfiction', '2025-09-27', '9781668211656', 1),
 ('Hardcover Nonfiction', '2025-09-27', '9781984862105', 2),
